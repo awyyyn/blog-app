@@ -8,6 +8,7 @@
   },
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.8.10",
     "@apollo/server": "^4.10.0",
     "@apollo/subgraph": "^2.7.0",
     "@graphql-tools/schema": "^10.0.2",

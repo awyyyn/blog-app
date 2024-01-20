@@ -1,12 +1,21 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import styles from './app.module.css';
+import gql from 'graphql-tag';
+import { useQuery } from '@apollo/client';
 
-import NxWelcome from './nx-welcome';
+const GET = gql`
+  query ExampleQuery {
+    getUsers
+  }
+`;
 
 export function App() {
+  const { data, loading } = useQuery(GET);
+
+  if (loading) return <h1>Loading...</h1>;
+
   return (
     <div>
-      <NxWelcome title="blog-fe" />
+      <h1>Hello World {data.getUsers}</h1>
     </div>
   );
 }
