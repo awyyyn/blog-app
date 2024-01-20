@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "affected": {
-    "defaultBase": "master"
+    "defaultBase": "main"
   },
   "targetDefaults": {
     "build": {
@@ -30,6 +30,10 @@
           "codeCoverage": true
         }
       }
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "namedInputs": {
@@ -46,5 +50,22 @@
     ],
     "sharedGlobals": []
   },
-  "nxCloudAccessToken": "ODk3OGRmNjAtNzJhMy00NTVjLThhYWItNmY1N2FhYzAxYTQ1fHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "ODk3OGRmNjAtNzJhMy00NTVjLThhYWItNmY1N2FhYzAxYTQ1fHJlYWQtd3JpdGU=",
+  "generators": {
+    "@nx/react": {
+      "application": {
+        "style": "css",
+        "linter": "eslint",
+        "bundler": "vite",
+        "babel": true
+      },
+      "component": {
+        "style": "css"
+      },
+      "library": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    }
+  }
 }

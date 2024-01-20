@@ -1,0 +1,35 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Dev",
+      "dependsOrder": "parallel",
+      "dependsOn": ["Backend", "Frontend"],
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "blog-app:dev",
+      "problemMatcher": [],
+      "label": "Backend",
+      "detail": "npx nx run blog-app:serve --configuration=development",
+      "presentation": {
+        "group": "runDev",
+        "reveal": "always"
+      }
+    },
+    {
+      "type": "npm",
+      "script": "blog-fe:dev",
+      "label": "Frontend",
+      "detail": "npx nx run blog-fe:serve --configuration=development",
+      "presentation": {
+        "group": "runDev",
+        "reveal": "always"
+      }
+    }
+  ]
+}
