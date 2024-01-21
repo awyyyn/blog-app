@@ -1,10 +1,8 @@
-import { createUserResolver } from './resolvers/user-resolver';
+import { createUserResolver, getUserResolver } from './resolvers/user-resolver';
 
 export const resolvers = {
   Query: {
-    async getUsers() {
-      return 'hello world';
-    },
+    getUsers: getUserResolver,
   },
 
   Mutation: {

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "blog-app:dev": "env-cmd -f .env.local npx nx run blog-app:serve --configuration=development",
+    "blog-app:dev": "npx nx run blog-app:serve --configuration=development",
     "blog-fe:dev": "npx nx run blog-fe:serve --configuration=development"
   },
   "private": true,

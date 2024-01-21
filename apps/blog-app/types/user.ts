@@ -1,10 +1,15 @@
 export interface User {
-  _id: string;
+  id: string;
   firstname: string;
   lastname: string;
   email: string;
-  password: string;
   username: string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface GetUserArgs {
+  start?: number;
+  end?: number;
+  all?: '*';
 }
