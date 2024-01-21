@@ -9,7 +9,9 @@ import {
 import Home from './pages/home/home';
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from '../../utils/graphql';
+import { NextUIProvider } from '@nextui-org/react';
 import { Auth0Provider } from '@auth0/auth0-react';
+import Callback from './pages/callback/callback';
 
 export function App() {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN ?? '';
@@ -18,8 +20,8 @@ export function App() {
   const router = createBrowserRouter(
     createRoutesFromElements([
       <Route path="/" element={<Home />} />,
+      <Route path="/callback" element={<Callback />} />,
       <Route path="/*" element={<h1>404</h1>} />,
-      <Route path="/callback" element={<h1>404</h1>} />,
     ])
   );
 
@@ -36,7 +38,9 @@ export function App() {
       legacySameSiteCookie
     >
       <ApolloProvider client={apolloClient}>
-        <RouterProvider router={router} />
+        <NextUIProvider>
+          <RouterProvider router={router} />
+        </NextUIProvider>
       </ApolloProvider>
     </Auth0Provider>
   );
