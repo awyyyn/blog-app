@@ -7,7 +7,11 @@
       "@nx/react/typings/cssmodule.d.ts",
       "@nx/react/typings/image.d.ts",
       "vite/client"
-    ]
+    ],
+    "paths": {
+      "@components": ["./src/app/components"],
+      "@pages": ["./src/app/pages"]
+    }
   },
   "exclude": [
     "src/**/*.spec.ts",

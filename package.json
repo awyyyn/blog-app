@@ -11,6 +11,7 @@
     "@apollo/client": "^3.8.10",
     "@apollo/server": "^4.10.0",
     "@apollo/subgraph": "^2.7.0",
+    "@auth0/auth0-react": "^2.2.4",
     "@graphql-tools/schema": "^10.0.2",
     "@prisma/client": "^5.8.1",
     "@swc/helpers": "~0.5.2",

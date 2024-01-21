@@ -1,7 +1,5 @@
 import { StrictMode } from 'react';
 import * as ReactDOM from 'react-dom/client';
-import { ApolloProvider } from '@apollo/client';
-import { apolloClient } from '../utils/graphql';
 import App from './app/app';
 
 const root = ReactDOM.createRoot(
@@ -9,8 +7,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <StrictMode>
-    <ApolloProvider client={apolloClient}>
-      <App />
-    </ApolloProvider>
+    <App />
   </StrictMode>
 );
