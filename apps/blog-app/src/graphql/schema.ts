@@ -37,6 +37,7 @@ export const typeDefs = gql`
     description: String
     author: User
     comments: [Comment]
+    likes: Int
   }
 
   type Comment {
