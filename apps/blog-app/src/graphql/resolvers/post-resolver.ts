@@ -58,6 +58,9 @@ export const getPostsWithPaginationResolver = async (
     const post = await prisma.post.findMany({
       skip: offset,
       take: limit,
+      include: {
+        author: true,
+      },
     });
     return post;
   } catch (error) {
