@@ -27,32 +27,32 @@ const GET_POSTS = gql`
 `;
 
 export function Home(props: HomeProps) {
-  const [fetchInput, setFetchInput] = useState({ offset: 0, limit: 2 });
   const { fetchMore, data, loading } = useQuery(GET_POSTS, {
     variables: {
-      limit: fetchInput.limit,
-      offset: fetchInput.offset,
+      limit: 3,
+      offset: 0,
     },
   });
 
   console.log(data);
   return (
-    <Layout>
-      <div className={styles['container']}>
-        <h1>Welcome to Home!</h1>
-      </div>
-      <button
-        onClick={() => {
-          fetchMore({
-            variables: {
-              offset: data.getPostsWithPagination.length,
-            },
-          });
-        }}
-      >
-        Fetch More
-      </button>
-    </Layout>
+    <div className="flex items-center flex-col flex-wrap gap-5    md:max-w-min">
+      {data &&
+        data.getPostsWithPagination.map((post: PostCardProps) => (
+          <PostCard key={post.id} {...post} />
+        ))}
+      {/* <button
+    onClick={() => {
+      fetchMore({
+        variables: {
+          offset: data.getPostsWithPagination.length,
+        },
+      });
+    }}
+  >
+    Fetch More
+  </button> */}
+    </div>
   );
 }
 

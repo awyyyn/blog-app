@@ -8,6 +8,8 @@ import {
   Button,
 } from '@nextui-org/react';
 import { useState } from 'react';
+import { AiOutlineHeart } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
 export interface PostCardProps {
@@ -33,9 +35,16 @@ export function PostCard({
   updatedAt,
 }: PostCardProps) {
   const [isFollowed, setIsFollowed] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigate = () => navigate(`/post/${id}`);
 
   return (
-    <Card className="max-w-[340px]">
+    <Card
+      className="w-[340px] sm:w-[440px] md:min-w-[640px]"
+      isPressable
+      onClick={handleNavigate}
+    >
       <CardHeader className="justify-between">
         <div className="flex gap-5">
           <Avatar
@@ -72,9 +81,23 @@ export function PostCard({
         <p>{description}</p>
       </CardBody>
       <CardFooter className="gap-3">
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-center">
+          <Button
+            variant="light"
+            isIconOnly
+            className="bg-none border-none hover:bg-none"
+            radius="full"
+            size="sm"
+          >
+            <AiOutlineHeart
+              color="#ff0000"
+              height={40}
+              scale={1.5}
+              width={40}
+            />
+          </Button>
           <p className="font-semibold text-default-400 text-small">{likes}</p>
-          <p className=" text-default-400 text-small">Likes</p>
+          <p className="text-default-400 text-small">Likes</p>
         </div>
         <div className="flex gap-1">
           <p className="font-semibold text-default-400 text-small">0</p>

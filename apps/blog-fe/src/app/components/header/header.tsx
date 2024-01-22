@@ -25,7 +25,7 @@ const links = [
 
 export function Header(props: HeaderProps) {
   return (
-    <Navbar>
+    <Navbar className="top-0 fixed" isBordered isBlurred>
       <NavbarBrand>
         <p className="font-bold text-inherit">Bloog</p>
       </NavbarBrand>
