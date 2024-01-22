@@ -19,9 +19,14 @@ model User {
   lastname String   
   comments Comment[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt 
+  followedBy    User[]   @relation("UserFollows", fields: [followedByIDs], references: [id])
+  followedByIDs String[] @db.ObjectId
+  following     User[]   @relation("UserFollows", fields: [followingIDs], references: [id])
+  followingIDs  String[] @db.ObjectId
 }
- 
+
+
 
 model Post {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
