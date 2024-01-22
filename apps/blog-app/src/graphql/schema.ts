@@ -6,41 +6,58 @@ export const typeDefs = gql`
     getPosts: [Post]
     getCommentsByPostId(postId: String): [Comment]
     getPostById(id: String): Post
+    searchUsers(query: String!): [User]
+    getPostsWithPagination(offset: Int, limit: Int): [Post]
   }
 
   type Mutation {
     #creates a user
-    createUser(
-      firstname: String!
-      lastname: String!
-      username: String!
-      email: String!
-    ): User!
+    createUser(userInput: userInput): User!
     #creates a post
-    createPost(authorId: String, description: String): Post
+    createPost(postInput: postInput): Post!
     #creates a comment
-    createComment(postId: String!, userId: String!, comment: String!): Comment!
+    createComment(commentInput: commentInput): Comment!
   }
 
-  type User {
-    id: String
+  input userInput {
     firstname: String!
     lastname: String!
     username: String!
     email: String!
-    # createdAt: String
-    # updatedAt: String
+  }
+
+  input postInput {
+    description: String!
+    userId: String!
+  }
+
+  input commentInput {
+    authorId: String
+    description: String
+  }
+
+  type User {
+    id: ID
+    firstname: String!
+    lastname: String!
+    username: String!
+    email: String!
+    createdAt: String!
+    updatedAt: String!
   }
 
   type Post {
-    id: String!
+    id: ID!
     description: String
     author: User
     comments: [Comment]
+    likes: Int
+    createdAt: String!
+    updatedAt: String!
   }
 
   type Comment {
-    id: String!
+    id: ID!
     comment: String!
     post: Post
     user: User
