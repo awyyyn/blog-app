@@ -7,6 +7,7 @@ import {
   getPostsResolver,
   createPostResolver,
   getPostByIdResolver,
+  getPostsWithPaginationResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
@@ -20,6 +21,7 @@ export const resolvers = {
     getCommentsByPostId: getCommentsByPostIdResolver,
     getPostById: getPostByIdResolver,
     searchUsers: searchUsersResolver,
+    getPostsWithPagination: getPostsWithPaginationResolver,
   },
 
   Mutation: {

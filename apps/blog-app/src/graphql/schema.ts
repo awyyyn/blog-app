@@ -7,13 +7,14 @@ export const typeDefs = gql`
     getCommentsByPostId(postId: String): [Comment]
     getPostById(id: String): Post
     searchUsers(query: String!): [User]
+    getPostsWithPagination(offset: Int, limit: Int): [Post]
   }
 
   type Mutation {
     #creates a user
     createUser(userInput: userInput): User!
     #creates a post
-    createPost(postInput: postInput): Post
+    createPost(postInput: postInput): Post!
     #creates a comment
     createComment(commentInput: commentInput): Comment!
   }
@@ -26,9 +27,8 @@ export const typeDefs = gql`
   }
 
   input postInput {
-    postId: String!
+    description: String!
     userId: String!
-    comment: String!
   }
 
   input commentInput {
@@ -42,8 +42,8 @@ export const typeDefs = gql`
     lastname: String!
     username: String!
     email: String!
-    # createdAt: String
-    # updatedAt: String
+    createdAt: String!
+    updatedAt: String!
   }
 
   type Post {
@@ -52,6 +52,8 @@ export const typeDefs = gql`
     author: User
     comments: [Comment]
     likes: Int
+    createdAt: String!
+    updatedAt: String!
   }
 
   type Comment {

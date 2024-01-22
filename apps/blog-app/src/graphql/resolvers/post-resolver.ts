@@ -16,15 +16,16 @@ export const getPostsResolver = async () => {
 
 export const createPostResolver = async (
   _,
-  args: { authorId: string; description: string }
+  { postInput }: { postInput: { userId: string; description: string } }
 ) => {
+  const { description, userId } = postInput;
   try {
     const post = await prisma.post.create({
       data: {
         author: {
-          connect: { id: args.authorId },
+          connect: { id: userId },
         },
-        description: args.description,
+        description: description,
       },
     });
 
@@ -42,6 +43,21 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
         author: true,
         comments: true,
       },
+    });
+    return post;
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};
+
+export const getPostsWithPaginationResolver = async (
+  _,
+  { limit, offset }: { offset: number; limit: number }
+) => {
+  try {
+    const post = await prisma.post.findMany({
+      skip: offset,
+      take: limit,
     });
     return post;
   } catch (error) {

@@ -4,12 +4,10 @@ export interface User {
   lastname: string;
   email: string;
   username: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface GetUserArgs {
-  start?: number;
-  end?: number;
-  all?: '*';
-}
+export type UserInput = {
+  userInput: Omit<User, 'id' | 'updatedAt' | 'createdAt'>;
+};
