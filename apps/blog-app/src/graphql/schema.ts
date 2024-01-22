@@ -6,24 +6,38 @@ export const typeDefs = gql`
     getPosts: [Post]
     getCommentsByPostId(postId: String): [Comment]
     getPostById(id: String): Post
+    searchUsers(query: String!): [User]
   }
 
   type Mutation {
     #creates a user
-    createUser(
-      firstname: String!
-      lastname: String!
-      username: String!
-      email: String!
-    ): User!
+    createUser(userInput: userInput): User!
     #creates a post
-    createPost(authorId: String, description: String): Post
+    createPost(postInput: postInput): Post
     #creates a comment
-    createComment(postId: String!, userId: String!, comment: String!): Comment!
+    createComment(commentInput: commentInput): Comment!
+  }
+
+  input userInput {
+    firstname: String!
+    lastname: String!
+    username: String!
+    email: String!
+  }
+
+  input postInput {
+    postId: String!
+    userId: String!
+    comment: String!
+  }
+
+  input commentInput {
+    authorId: String
+    description: String
   }
 
   type User {
-    id: String
+    id: ID
     firstname: String!
     lastname: String!
     username: String!
@@ -33,7 +47,7 @@ export const typeDefs = gql`
   }
 
   type Post {
-    id: String!
+    id: ID!
     description: String
     author: User
     comments: [Comment]
@@ -41,7 +55,7 @@ export const typeDefs = gql`
   }
 
   type Comment {
-    id: String!
+    id: ID!
     comment: String!
     post: Post
     user: User

@@ -27,3 +27,30 @@ export const getUserResolver = async () => {
     throw new GraphQLError(error.message);
   }
 };
+
+export const searchUsersResolver = async (_, { query }: { query: string }) => {
+  try {
+    const user = prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            email: { contains: query },
+          },
+          {
+            username: { contains: query },
+          },
+          {
+            firstname: { contains: query },
+          },
+          {
+            lastname: { contains: query },
+          },
+        ],
+      },
+    });
+
+    return user;
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};

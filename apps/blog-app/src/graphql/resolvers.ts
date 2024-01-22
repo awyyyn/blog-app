@@ -1,4 +1,8 @@
-import { createUserResolver, getUserResolver } from './resolvers/user-resolver';
+import {
+  createUserResolver,
+  getUserResolver,
+  searchUsersResolver,
+} from './resolvers/user-resolver';
 import {
   getPostsResolver,
   createPostResolver,
@@ -15,6 +19,7 @@ export const resolvers = {
     getPosts: getPostsResolver,
     getCommentsByPostId: getCommentsByPostIdResolver,
     getPostById: getPostByIdResolver,
+    searchUsers: searchUsersResolver,
   },
 
   Mutation: {
