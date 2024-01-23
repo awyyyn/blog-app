@@ -33,8 +33,9 @@ export const typeDefs = gql`
   }
 
   input commentInput {
-    authorId: String
-    description: String
+    userId: String
+    postId: String
+    comment: String
   }
 
   type User {

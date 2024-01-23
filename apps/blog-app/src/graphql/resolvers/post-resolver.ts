@@ -7,6 +7,7 @@ export const getPostsResolver = async () => {
     const posts = await prisma.post.findMany({
       include: {
         author: true,
+        // comments: true,
       },
     });
     return posts;
@@ -45,9 +46,15 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
       where: { id },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
+        _count: true,
       },
     });
+
     return post;
   } catch (error) {
     throw new GraphQLError(error);
@@ -69,6 +76,7 @@ export const getPostsWithPaginationResolver = async (
     });
     return post;
   } catch (error) {
+    console.log(error.message);
     throw new GraphQLError(error);
   }
 };
