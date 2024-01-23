@@ -7,7 +7,6 @@ export interface UserAvatarProps {}
 export function UserAvatar(props: UserAvatarProps) {
   return (
     <div className={styles['container']}>
-      {' '}
       <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" size="md" />
     </div>
   );
