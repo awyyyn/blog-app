@@ -55,7 +55,9 @@ const ADD_COMMENT = gql`
 export function Post(props: PostProps) {
   const params = useParams();
   const [comment, setComment] = useState('');
-  const [add_comment, { data: comment_data }] = useMutation(ADD_COMMENT);
+  const [add_comment, { data: comment_data }] = useMutation(ADD_COMMENT, {
+    refetchQueries: [GET_POST, 'GetPostById'],
+  });
 
   const { data, loading } = useQuery(GET_POST, {
     variables: {
