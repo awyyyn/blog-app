@@ -55,9 +55,10 @@ const ADD_COMMENT = gql`
 export function Post(props: PostProps) {
   const params = useParams();
   const [comment, setComment] = useState('');
-  const [add_comment, { data: comment_data }] = useMutation(ADD_COMMENT, {
-    refetchQueries: [GET_POST, 'GetPostById'],
-  });
+  const [add_comment, { data: comment_data, loading: adding_comment }] =
+    useMutation(ADD_COMMENT, {
+      refetchQueries: [GET_POST, 'GetPostById'],
+    });
 
   const { data, loading } = useQuery(GET_POST, {
     variables: {
@@ -131,11 +132,13 @@ export function Post(props: PostProps) {
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Comment..."
+          isReadOnly={adding_comment}
           onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
           endContent={
             <Button
               isIconOnly
               variant="flat"
+              isLoading={adding_comment}
               onClick={handleAddComment}
               className="bg-secondary-100 hover:bg-secondary-500 focus:bg-secondary-500 focus:text-white hover:text-white"
             >
@@ -149,7 +152,7 @@ export function Post(props: PostProps) {
           <Comment
             key={comment.id}
             comment={comment.comment}
-            name={`${comment.user.firstname} ${comment.user.lastname}`}
+            name={`${comment?.user?.firstname} ${comment?.user?.lastname}`}
             // name={'asd'}
           />
         ))}
