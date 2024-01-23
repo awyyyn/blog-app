@@ -12,11 +12,12 @@ datasource db {
 
 model User {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
-  username String @unique 
-  email    String @unique
+  username String? @unique  
+  email    String @unique 
   Post Post[]
   firstname String
   lastname String   
+  profile String? @db.String
   comments Comment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt 
@@ -33,6 +34,7 @@ model Post {
   authorId String @db.ObjectId
   author   User   @relation(fields: [authorId], references: [id])
   comments Comment[]
+  title String
   description String
   likes Int? @default(0)
   createdAt DateTime @default(now())  

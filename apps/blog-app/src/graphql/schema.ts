@@ -29,6 +29,7 @@ export const typeDefs = gql`
   input postInput {
     description: String!
     userId: String!
+    title: String!
   }
 
   input commentInput {
@@ -42,6 +43,7 @@ export const typeDefs = gql`
     lastname: String!
     username: String!
     email: String!
+    profile: String
     createdAt: String!
     updatedAt: String!
   }
@@ -52,6 +54,7 @@ export const typeDefs = gql`
     author: User
     comments: [Comment]
     likes: Int
+    title: String!
     createdAt: String!
     updatedAt: String!
   }

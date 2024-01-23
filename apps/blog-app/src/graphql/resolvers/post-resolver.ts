@@ -2,6 +2,7 @@ import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma';
 
 export const getPostsResolver = async () => {
+  console.log('GET POSTS');
   try {
     const posts = await prisma.post.findMany({
       include: {
@@ -16,16 +17,19 @@ export const getPostsResolver = async () => {
 
 export const createPostResolver = async (
   _,
-  { postInput }: { postInput: { userId: string; description: string } }
+  {
+    postInput,
+  }: { postInput: { userId: string; description: string; title: string } }
 ) => {
-  const { description, userId } = postInput;
+  const { description, userId, title } = postInput;
   try {
     const post = await prisma.post.create({
       data: {
         author: {
           connect: { id: userId },
         },
-        description: description,
+        title,
+        description,
       },
     });
 
@@ -55,6 +59,7 @@ export const getPostsWithPaginationResolver = async (
   { limit, offset }: { offset: number; limit: number }
 ) => {
   try {
+    console.log('S');
     const post = await prisma.post.findMany({
       skip: offset,
       take: limit,
