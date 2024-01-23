@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-import Layout from '../../layout';
 import styles from './post.module.css';
 import { useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';

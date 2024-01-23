@@ -41,9 +41,11 @@ export function PostCard({
 
   return (
     <Card
-      className="w-[340px] sm:w-[440px] md:min-w-[640px]"
+      className="w-[340px] sm:w-[440px] lg:min-w-[740px] md:min-w-[540px]"
       isPressable
       onClick={handleNavigate}
+      shadow="sm"
+      radius="sm"
     >
       <CardHeader className="justify-between">
         <div className="flex gap-5">
