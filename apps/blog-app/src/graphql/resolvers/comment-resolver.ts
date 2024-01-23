@@ -1,13 +1,10 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma';
+import { CommentInput } from '@blog-app/shared';
 
 export const createCommentResolver = async (
   _,
-  {
-    postId,
-    userId,
-    comment,
-  }: { postId: string; userId: string; comment: string }
+  { comment, postId, userId }: CommentInput
 ) => {
   try {
     const commentData = await prisma.comment.create({

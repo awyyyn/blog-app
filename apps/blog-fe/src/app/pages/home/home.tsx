@@ -1,9 +1,9 @@
-import styles from './home.module.css';
-import Layout from '../../layout';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
-import { useState } from 'react';
-import PostCard, { PostCardProps } from '../../components/post-card/post-card';
+import { Suspense, lazy } from 'react';
+import type { PostCardProps } from '../../components/post-card/post-card';
+import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
+const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
 /* eslint-disable-next-line */
 export interface HomeProps {}
@@ -16,6 +16,7 @@ const GET_POSTS = gql`
       likes
       createdAt
       updatedAt
+      title
       author {
         id
         username
@@ -34,24 +35,30 @@ export function Home(props: HomeProps) {
     },
   });
 
-  console.log(data);
+  if (loading) {
+    return <PostCardSpinner />;
+  }
+
   return (
-    <div className="flex items-center flex-col flex-wrap gap-5    md:max-w-min">
+    <div className="flex items-center flex-col flex-wrap gap-5 md:max-w-min">
       {data &&
         data.getPostsWithPagination.map((post: PostCardProps) => (
-          <PostCard key={post.id} {...post} />
+          <Suspense key={post.id} fallback={<PostCardSpinner />}>
+            <PostCard {...post} />
+          </Suspense>
         ))}
-      {/* <button
-    onClick={() => {
-      fetchMore({
-        variables: {
-          offset: data.getPostsWithPagination.length,
-        },
-      });
-    }}
-  >
-    Fetch More
-  </button> */}
+
+      <button
+        onClick={() => {
+          fetchMore({
+            variables: {
+              offset: data.getPostsWithPagination.length,
+            },
+          });
+        }}
+      >
+        Fetch More
+      </button>
     </div>
   );
 }

@@ -37,10 +37,9 @@ export function App() {
       authorizationParams={{
         redirect_uri: `${window.location.origin}/callback`,
         audience: `https://${domain}/api/v2/`,
-        scope: 'openid profile email',
+        scope: 'openid profile email username',
       }}
       cacheLocation="localstorage"
-      legacySameSiteCookie
     >
       <ApolloProvider client={apolloClient}>
         <NextUIProvider>

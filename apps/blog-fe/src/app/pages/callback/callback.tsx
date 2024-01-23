@@ -17,7 +17,7 @@ export function Callback() {
         }
       })();
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <div>
