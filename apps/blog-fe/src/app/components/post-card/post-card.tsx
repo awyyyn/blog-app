@@ -20,6 +20,7 @@ export interface PostCardProps {
     lastname: string;
   };
   id: string;
+  title: string;
   description: string;
   likes: number;
   createdAt: string;
@@ -28,6 +29,7 @@ export interface PostCardProps {
 
 export function PostCard({
   author,
+  title,
   createdAt,
   description,
   id,
@@ -80,7 +82,8 @@ export function PostCard({
         </Button>
       </CardHeader>
       <CardBody className="px-3 py-0 text-small text-default-400">
-        <p>{description}</p>
+        <h1 className="font-bold">{title}</h1>
+        <p>{String(description).substring(0, 140)}</p>
       </CardBody>
       <CardFooter className="gap-3">
         <div className="flex gap-1 items-center">
