@@ -19,6 +19,11 @@ export const typeDefs = gql`
     createComment(commentInput: commentInput): Comment!
   }
 
+  type Subscription {
+    postCreated: Post
+    commentAdded(postId: ID!): Comment!
+  }
+
   input userInput {
     firstname: String!
     lastname: String!

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import styles from './post.module.css';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import UserAvatar from '../../components/user-avatar/user-avatar';
 import { Button, Divider, Input } from '@nextui-org/react';
@@ -52,13 +52,28 @@ const ADD_COMMENT = gql`
   }
 `;
 
+const SUBSCRIBE_COMMENT = gql`
+  subscription CommentAdded($postid: ID!) {
+    commentAdded(postId: $postid) {
+      id
+      comment
+      user {
+        firstname
+        lastname
+      }
+    }
+  }
+`;
+
 export function Post(props: PostProps) {
   const params = useParams();
   const [comment, setComment] = useState('');
-  const [add_comment, { data: comment_data, loading: adding_comment }] =
-    useMutation(ADD_COMMENT, {
-      refetchQueries: [GET_POST, 'GetPostById'],
+
+  const { data: subscribe_comment, loading: subscribe_loading } =
+    useSubscription(SUBSCRIBE_COMMENT, {
+      variables: { postid: params.id },
     });
+  const [add_comment, { loading: adding_comment }] = useMutation(ADD_COMMENT);
 
   const { data, loading } = useQuery(GET_POST, {
     variables: {
@@ -67,7 +82,7 @@ export function Post(props: PostProps) {
   });
 
   if (loading) return;
-  console.log(comment_data);
+
   const handleAddComment = async () => {
     if (!comment) return;
     await add_comment({
@@ -82,6 +97,8 @@ export function Post(props: PostProps) {
     });
     setComment('');
   };
+
+  console.log(subscribe_loading ? 'loading subscription' : subscribe_comment);
 
   return (
     <div className={styles['container']}>

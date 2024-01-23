@@ -13,6 +13,8 @@ import {
   createCommentResolver,
   getCommentsByPostIdResolver,
 } from './resolvers/comment-resolver';
+import pubsub from './pubsub';
+import { commentSubscriptionResolver } from './resolvers/comment-subscription-resolver';
 
 export const resolvers = {
   Query: {
@@ -22,6 +24,13 @@ export const resolvers = {
     getPostById: getPostByIdResolver,
     searchUsers: searchUsersResolver,
     getPostsWithPagination: getPostsWithPaginationResolver,
+  },
+
+  Subscription: {
+    postCreated: {
+      subscribe: () => pubsub.asyncIterator(['POST_CREATED']),
+    },
+    commentAdded: commentSubscriptionResolver,
   },
 
   Mutation: {

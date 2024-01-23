@@ -1,5 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma';
+import { PostInput } from '@blog-app/shared';
+import pubsub from '../pubsub';
 
 export const getPostsResolver = async () => {
   console.log('GET POSTS');
@@ -18,11 +20,9 @@ export const getPostsResolver = async () => {
 
 export const createPostResolver = async (
   _,
-  {
-    postInput,
-  }: { postInput: { userId: string; description: string; title: string } }
+  { postInput }: { postInput: PostInput }
 ) => {
-  const { description, userId, title } = postInput;
+  const { description, title, userId } = postInput;
   try {
     const post = await prisma.post.create({
       data: {
@@ -32,6 +32,10 @@ export const createPostResolver = async (
         title,
         description,
       },
+    });
+
+    pubsub.publish('POST_CREATED', {
+      postCreated: post,
     });
 
     return post;
