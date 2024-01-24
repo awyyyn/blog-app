@@ -1,6 +1,7 @@
 import {
   createUserResolver,
   getUserResolver,
+  getLikedPostByUserResolver,
   searchUsersResolver,
 } from './resolvers/user-resolver';
 import {
@@ -8,6 +9,8 @@ import {
   createPostResolver,
   getPostByIdResolver,
   getPostsWithPaginationResolver,
+  likePostResolver,
+  getTotalLikesByPostIdResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
@@ -24,6 +27,8 @@ export const resolvers = {
     getPostById: getPostByIdResolver,
     searchUsers: searchUsersResolver,
     getPostsWithPagination: getPostsWithPaginationResolver,
+    getLikedPostByUser: getLikedPostByUserResolver,
+    getTotalLikesByPostId: getTotalLikesByPostIdResolver,
   },
 
   Subscription: {
@@ -37,5 +42,6 @@ export const resolvers = {
     createUser: createUserResolver,
     createPost: createPostResolver,
     createComment: createCommentResolver,
+    likePost: likePostResolver,
   },
 };

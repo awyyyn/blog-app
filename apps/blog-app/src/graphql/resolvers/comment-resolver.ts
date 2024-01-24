@@ -17,6 +17,7 @@ export const createCommentResolver = async (
       },
       include: {
         post: true,
+
         user: true,
       },
     });
@@ -33,7 +34,7 @@ export const createCommentResolver = async (
 
 export const getCommentsByPostIdResolver = async (
   _,
-  { postId }: { postId: string }
+  { postId, offset }: { postId: string; offset: number }
 ) => {
   try {
     const comments = await prisma.comment.findMany({
@@ -44,6 +45,11 @@ export const getCommentsByPostIdResolver = async (
         post: true,
         user: true,
       },
+      skip: offset,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
     });
 
     return comments;

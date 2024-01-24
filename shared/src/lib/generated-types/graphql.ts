@@ -29,6 +29,7 @@ export type Mutation = {
   createComment: Comment;
   createPost: Post;
   createUser: User;
+  likePost?: Maybe<Post>;
 };
 
 
@@ -46,6 +47,11 @@ export type MutationCreateUserArgs = {
   userInput?: InputMaybe<UserInput>;
 };
 
+
+export type MutationLikePostArgs = {
+  likePostInput?: InputMaybe<LikePostInput>;
+};
+
 export type Post = {
   __typename?: 'Post';
   author?: Maybe<User>;
@@ -53,9 +59,17 @@ export type Post = {
   createdAt: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  liked_by?: Maybe<Array<Maybe<PostLikes>>>;
   likes?: Maybe<Scalars['Int']['output']>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
+};
+
+export type PostLikes = {
+  __typename?: 'PostLikes';
+  id: Scalars['ID']['output'];
+  post?: Maybe<Post>;
+  user?: Maybe<User>;
 };
 
 export type Query = {
@@ -70,6 +84,7 @@ export type Query = {
 
 
 export type QueryGetCommentsByPostIdArgs = {
+  offset?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -97,16 +112,18 @@ export type Subscription = {
 
 
 export type SubscriptionCommentAddedArgs = {
-  postid: Scalars['ID']['input'];
+  postId: Scalars['ID']['input'];
 };
 
 export type User = {
   __typename?: 'User';
+  comments?: Maybe<Array<Maybe<Comment>>>;
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
   firstname: Scalars['String']['output'];
   id?: Maybe<Scalars['ID']['output']>;
   lastname: Scalars['String']['output'];
+  liked_posts?: Maybe<Array<Maybe<PostLikes>>>;
   profile?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
@@ -116,6 +133,11 @@ export type CommentInput = {
   comment?: InputMaybe<Scalars['String']['input']>;
   postId?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type LikePostInput = {
+  postId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 export type PostInput = {
@@ -208,11 +230,13 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Post: ResolverTypeWrapper<Post>;
+  PostLikes: ResolverTypeWrapper<PostLikes>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Subscription: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   commentInput: CommentInput;
+  likePostInput: LikePostInput;
   postInput: PostInput;
   userInput: UserInput;
 };
@@ -225,11 +249,13 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']['output'];
   Mutation: {};
   Post: Post;
+  PostLikes: PostLikes;
   Query: {};
   String: Scalars['String']['output'];
   Subscription: {};
   User: User;
   commentInput: CommentInput;
+  likePostInput: LikePostInput;
   postInput: PostInput;
   userInput: UserInput;
 };
@@ -246,6 +272,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createComment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType, Partial<MutationCreateCommentArgs>>;
   createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, Partial<MutationCreatePostArgs>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationCreateUserArgs>>;
+  likePost?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, Partial<MutationLikePostArgs>>;
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
@@ -254,9 +281,17 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  liked_by?: Resolver<Maybe<Array<Maybe<ResolversTypes['PostLikes']>>>, ParentType, ContextType>;
   likes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PostLikesResolvers<ContextType = any, ParentType extends ResolversParentTypes['PostLikes'] = ResolversParentTypes['PostLikes']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -270,16 +305,18 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
-  commentAdded?: SubscriptionResolver<ResolversTypes['Comment'], "commentAdded", ParentType, ContextType, RequireFields<SubscriptionCommentAddedArgs, 'postid'>>;
+  commentAdded?: SubscriptionResolver<ResolversTypes['Comment'], "commentAdded", ParentType, ContextType, RequireFields<SubscriptionCommentAddedArgs, 'postId'>>;
   postCreated?: SubscriptionResolver<Maybe<ResolversTypes['Post']>, "postCreated", ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  comments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comment']>>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   firstname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   lastname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  liked_posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['PostLikes']>>>, ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -290,6 +327,7 @@ export type Resolvers<ContextType = any> = {
   Comment?: CommentResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
+  PostLikes?: PostLikesResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

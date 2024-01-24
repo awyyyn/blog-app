@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma';
-import { PostInput } from '@blog-app/shared';
+import { LikePostInput, PostInput } from '@blog-app/shared';
 import pubsub from '../pubsub';
 
 export const getPostsResolver = async () => {
@@ -9,6 +9,7 @@ export const getPostsResolver = async () => {
     const posts = await prisma.post.findMany({
       include: {
         author: true,
+
         // comments: true,
       },
     });
@@ -49,16 +50,11 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
     const post = await prisma.post.findFirst({
       where: { id },
       include: {
+        liked_by: true,
         author: true,
-        comments: {
-          include: {
-            user: true,
-          },
-        },
-        _count: true,
+        comments: true,
       },
     });
-
     return post;
   } catch (error) {
     throw new GraphQLError(error);
@@ -79,6 +75,53 @@ export const getPostsWithPaginationResolver = async (
       },
     });
     return post;
+  } catch (error) {
+    console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};
+
+export const likePostResolver = async (
+  _,
+  { likePostInput }: { likePostInput: LikePostInput }
+) => {
+  try {
+    // const post = await prisma.user.update({});
+    const like_post = await prisma.postLikes.create({
+      data: {
+        user: {
+          connect: { id: likePostInput.userId },
+        },
+        post: {
+          connect: { id: likePostInput.postId },
+        },
+      },
+      include: {
+        post: true,
+        user: true,
+      },
+    });
+    console.log(like_post);
+    return like_post;
+  } catch (error) {
+    console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};
+
+export const getTotalLikesByPostIdResolver = async (
+  _,
+  { postId }: { postId: string }
+) => {
+  try {
+    const total_likes = await prisma.postLikes.aggregate({
+      where: {
+        postId,
+      },
+      _count: true,
+    });
+    console.log(total_likes);
+    return total_likes;
   } catch (error) {
     console.log(error.message);
     throw new GraphQLError(error);

@@ -36,7 +36,7 @@ export const apolloClient = new ApolloClient({
       Query: {
         fields: {
           getPostsWithPagination: offsetLimitPagination(),
-
+          getCommentsByPostId: offsetLimitPagination(),
           // {
           //   keyArgs: false,
           //   merge(existing = [], incoming) {
