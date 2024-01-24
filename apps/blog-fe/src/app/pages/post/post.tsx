@@ -1,73 +1,83 @@
-import gql from 'graphql-tag';
 import styles from './post.module.css';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import UserAvatar from '../../components/user-avatar/user-avatar';
 import { Button, Divider, Input } from '@nextui-org/react';
-import { AiOutlineHeart } from 'react-icons/ai';
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { VscSend } from 'react-icons/vsc';
-import { useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Comment as CommentType } from '@blog-app/shared';
-import Comment from '../../components/comment/comment';
+import {
+  ADD_COMMENT,
+  GET_COMMENTS,
+  GET_POST,
+  LIKE_POST,
+  SUBSCRIBE_COMMENT,
+} from '../../queries/queries';
+import { CommentsSpinner } from '../../components/comments/comments';
+const Comments = lazy(() => import('../../components/comments/comments'));
 
-/* eslint-disable-next-line */
-export interface PostProps {}
-
-const GET_POST = gql`
-  query GetPostById($id: String!) {
-    getPostById(id: $id) {
-      id
-      description
-      title
-      author {
-        username
-        firstname
-        lastname
-      }
-      comments {
-        id
-        comment
-        user {
-          firstname
-          lastname
-        }
-      }
-      likes
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-const ADD_COMMENT = gql`
-  mutation CreateComment($commentInput: commentInput) {
-    createComment(commentInput: $commentInput) {
-      id
-      comment
-      user {
-        firstname
-        lastname
-      }
-    }
-  }
-`;
-
-export function Post(props: PostProps) {
+export function Post() {
   const params = useParams();
+  const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState('');
-  const [add_comment, { data: comment_data, loading: adding_comment }] =
-    useMutation(ADD_COMMENT, {
-      refetchQueries: [GET_POST, 'GetPostById'],
-    });
+  const [comments, setComments] = useState<CommentType[]>([]);
 
+  const [add_comment, { loading: adding_comment }] = useMutation(ADD_COMMENT);
+
+  /* SUBSCRIBE COMMENT */
+  useSubscription(SUBSCRIBE_COMMENT, {
+    variables: { postid: params.id },
+    onData(options) {
+      if (options.data.error) return console.log(options);
+      setComments((prevComment) => [
+        options.data.data.commentAdded,
+        ...prevComment,
+      ]);
+    },
+  });
+
+  /* GET COMMENTS */
+  const {
+    fetchMore,
+    data: comments_data,
+    loading: loading_comments,
+  } = useQuery(GET_COMMENTS, {
+    variables: { postId: params.id, offset: 0 },
+    onError(error) {
+      console.group(error);
+    },
+  });
+
+  /* GET POST */
   const { data, loading } = useQuery(GET_POST, {
     variables: {
       id: params.id,
     },
+    onCompleted(data) {
+      setLiked(data.getLikedPostByPostId.exists);
+    },
   });
 
-  if (loading) return;
-  console.log(comment_data);
+  /* LIKE MUTATION */
+  const [like_post] = useMutation(LIKE_POST);
+
+  useEffect(() => {
+    if (comments_data) {
+      setComments(comments_data.getCommentsByPostId);
+    }
+  }, [comments_data]);
+
+  const handleFetchMore = () => {
+    fetchMore({
+      variables: {
+        offset: comments.length,
+      },
+    });
+  };
+
+  if (loading) return <h1>loadingg...</h1>;
+
   const handleAddComment = async () => {
     if (!comment) return;
     await add_comment({
@@ -83,12 +93,30 @@ export function Post(props: PostProps) {
     setComment('');
   };
 
+  const handleLikePost = () => {
+    like_post({
+      variables: {
+        likePostInput: {
+          userId: '65af33af1f968b8d0aaa174b',
+          postId: params.id,
+        },
+      },
+    });
+    setLiked(true);
+  };
+
   return (
     <div className={styles['container']}>
       <div className="flex gap-x-3">
         <UserAvatar />
-        <div>
-          <h1>{data.getPostById.author.username}</h1>
+        <div className="-space-y-1">
+          <h4 className="text-small font-semibold leading-none text-default-600">
+            {data.getPostById.author.firstname}{' '}
+            {data.getPostById.author.lastname}
+          </h4>
+          <h5 className="text-small tracking-tight text-default-400">
+            {data.getPostById.author.username}
+          </h5>
         </div>
       </div>
       <Divider className="my-4 bg-stone-100" />
@@ -96,7 +124,7 @@ export function Post(props: PostProps) {
         <h1 className="font-bold text-xl">{data.getPostById.title}</h1>
         <p>{data.getPostById.description}</p>
       </div>
-      <div className="flex gap-x-3">
+      <div className="flex gap-x-3 mt-2">
         <div className="flex items-center">
           <Button
             variant="light"
@@ -104,27 +132,39 @@ export function Post(props: PostProps) {
             className="bg-none border-none hover:bg-none"
             radius="full"
             size="md"
+            onClick={handleLikePost}
           >
-            <AiOutlineHeart
-              color="#ff0000"
-              height={40}
-              scale={1.5}
-              width={40}
-            />
+            {liked ? (
+              <AiFillHeart
+                color="#ff0000"
+                style={{
+                  width: 22,
+                  height: 22,
+                }}
+              />
+            ) : (
+              <AiOutlineHeart
+                color="#00000090"
+                style={{
+                  width: 22,
+                  height: 22,
+                }}
+              />
+            )}
           </Button>
-          <p className="font-semibold text-default-400 text-small">
-            {data.getPostById.likes}
+          <p className="font-semibold text-default-400  ">
+            {data.getPostById._count.liked_by}
           </p>
-          <p className="ml-2 text-default-400 text-small">Likes</p>
+          <p className="ml-2 text-default-400 ">Likes</p>
         </div>
         <div className="flex items-center">
-          <p className="font-semibold text-default-400 text-small">
-            {data.getPostById.comments.count}
+          <p className="font-semibold text-default-400  ">
+            {data.getPostById._count.comments}
           </p>
-          <p className="ml-2 text-default-400 text-small">Likes</p>
+          <p className="ml-2 text-default-400  ">Comments</p>
         </div>
       </div>
-      <Divider className="my-4 bg-stone-100" />
+      <Divider className="mb-4 bg-stone-200" />
       <div className="flex w-full   md:flex-nowrap mb-6 md:mb-0 gap-4">
         <UserAvatar size="sm" />
         <Input
@@ -147,16 +187,22 @@ export function Post(props: PostProps) {
           }
         />
       </div>
-      <div className="space-y-5 mt-5">
-        {data.getPostById.comments.map((comment: CommentType) => (
-          <Comment
-            key={comment.id}
-            comment={comment.comment}
-            name={`${comment?.user?.firstname} ${comment?.user?.lastname}`}
-            // name={'asd'}
-          />
-        ))}
-      </div>
+      <Suspense fallback={<CommentsSpinner />}>
+        <Comments comments={comments} />
+      </Suspense>
+      {data.getPostById._count.comments !==
+        comments_data?.getCommentsByPostId.length &&
+        comments_data?.getCommentsByPostId.length >= 10 && (
+          <Button
+            className="mt-5 mx-auto block"
+            fullWidth
+            variant="light"
+            onClick={handleFetchMore}
+            isLoading={loading_comments}
+          >
+            See more comments
+          </Button>
+        )}
     </div>
   );
 }

@@ -11,44 +11,62 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  username String? @unique  
-  email    String @unique 
-  Post Post[]
-  firstname String
-  lastname String   
-  profile String? @db.String
-  comments Comment[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
-  followedBy    User[]   @relation("UserFollows", fields: [followedByIDs], references: [id])
-  followedByIDs String[] @db.ObjectId
-  following     User[]   @relation("UserFollows", fields: [followingIDs], references: [id])
-  followingIDs  String[] @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  username      String?   @unique
+  email         String    @unique
+  firstname     String
+  lastname      String
+  profile       String?   @db.String 
+  comments      Comment[] @relation(name: "UserComment")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  followedBy    User[]    @relation("UserFollows", fields: [followedByIDs], references: [id])
+  followedByIDs String[]  @db.ObjectId
+  following     User[]    @relation("UserFollows", fields: [followingIDs], references: [id])
+  followingIDs  String[]  @db.ObjectId
+
+  Post Post[] @relation(name: "PostAuthor")
+  
+  liked_posts PostLikes[] @relation(name: "PostsLiked" )
 }
 
+model PostLikes {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user User @relation(name: "PostsLiked", fields: [userId], references: [id])
+  postId String @db.ObjectId
+  post Post @relation(name: "LikedPost", fields: [postId], references: [id])
 
+  @@unique([userId, postId])
+}
 
 model Post {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  authorId String @db.ObjectId
-  author   User   @relation(fields: [authorId], references: [id])
-  comments Comment[]
-  title String
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  comments    Comment[] 
+  title       String
   description String
-  likes Int? @default(0)
-  createdAt DateTime @default(now())  
-  updatedAt DateTime @updatedAt
+  likes       Int?      @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  authorId String @db.ObjectId
+  author   User   @relation(name: "PostAuthor", fields: [authorId], references: [id])
+ 
+
+  liked_by PostLikes[] @relation(name: "LikedPost")
+  // likedBy LikedPost[]
 }
+
 
 
 model Comment {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  comment String
-  postId String @db.ObjectId
-  post Post @relation(fields: [postId], references: [id])
-  userId String @db.ObjectId  
-  user User @relation(fields: [userId], references: [id])
-  likes Int? @default(0)
-  createdAt DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  comment   String
+  postId    String   @db.ObjectId
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String   @db.ObjectId
+  user      User     @relation(name: "UserComment", fields: [userId], references: [id])
+  likes     Int?     @default(0)
+  createdAt DateTime @default(now()) 
 }

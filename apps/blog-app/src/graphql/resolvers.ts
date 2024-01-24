@@ -1,6 +1,7 @@
 import {
   createUserResolver,
   getUserResolver,
+  getLikedPostByUserResolver,
   searchUsersResolver,
 } from './resolvers/user-resolver';
 import {
@@ -8,11 +9,16 @@ import {
   createPostResolver,
   getPostByIdResolver,
   getPostsWithPaginationResolver,
+  likePostResolver,
+  getTotalLikesByPostIdResolver,
+  getLikedPostByPostIdResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
   getCommentsByPostIdResolver,
 } from './resolvers/comment-resolver';
+import pubsub from './pubsub';
+import { commentSubscriptionResolver } from './resolvers/comment-subscription-resolver';
 
 export const resolvers = {
   Query: {
@@ -22,11 +28,22 @@ export const resolvers = {
     getPostById: getPostByIdResolver,
     searchUsers: searchUsersResolver,
     getPostsWithPagination: getPostsWithPaginationResolver,
+    getLikedPostByUser: getLikedPostByUserResolver,
+    getTotalLikesByPostId: getTotalLikesByPostIdResolver,
+    getLikedPostByPostId: getLikedPostByPostIdResolver,
+  },
+
+  Subscription: {
+    postCreated: {
+      subscribe: () => pubsub.asyncIterator(['POST_CREATED']),
+    },
+    commentAdded: commentSubscriptionResolver,
   },
 
   Mutation: {
     createUser: createUserResolver,
     createPost: createPostResolver,
     createComment: createCommentResolver,
+    likePost: likePostResolver,
   },
 };

@@ -1,13 +1,15 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma';
 import { CommentInput } from '@blog-app/shared';
+import pubsub from '../pubsub';
 
 export const createCommentResolver = async (
   _,
-  { comment, postId, userId }: CommentInput
+  { commentInput }: { commentInput: CommentInput }
 ) => {
   try {
-    const commentData = await prisma.comment.create({
+    const { comment, postId, userId } = commentInput;
+    const newComment = await prisma.comment.create({
       data: {
         comment,
         userId,
@@ -15,10 +17,16 @@ export const createCommentResolver = async (
       },
       include: {
         post: true,
+
+        user: true,
       },
     });
 
-    return commentData;
+    pubsub.publish('COMMENT_ADDED', {
+      commentAdded: newComment,
+    });
+
+    return newComment;
   } catch (error) {
     throw new GraphQLError(error);
   }
@@ -26,7 +34,7 @@ export const createCommentResolver = async (
 
 export const getCommentsByPostIdResolver = async (
   _,
-  { postId }: { postId: string }
+  { postId, offset }: { postId: string; offset: number }
 ) => {
   try {
     const comments = await prisma.comment.findMany({
@@ -37,6 +45,11 @@ export const getCommentsByPostIdResolver = async (
         post: true,
         user: true,
       },
+      skip: offset,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
     });
 
     return comments;

@@ -1,33 +1,11 @@
-import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
 import { Suspense, lazy } from 'react';
 import type { PostCardProps } from '../../components/post-card/post-card';
 import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
+import { GET_POSTS } from '../../queries/queries';
 const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
-/* eslint-disable-next-line */
-export interface HomeProps {}
-
-const GET_POSTS = gql`
-  query GetPostsWithPagination($offset: Int, $limit: Int) {
-    getPostsWithPagination(offset: $offset, limit: $limit) {
-      id
-      description
-      likes
-      createdAt
-      updatedAt
-      title
-      author {
-        id
-        username
-        firstname
-        lastname
-      }
-    }
-  }
-`;
-
-export function Home(props: HomeProps) {
+export function Home() {
   const { fetchMore, data, loading } = useQuery(GET_POSTS, {
     variables: {
       limit: 3,
@@ -38,6 +16,8 @@ export function Home(props: HomeProps) {
   if (loading) {
     return <PostCardSpinner />;
   }
+
+  console.log(data);
 
   return (
     <div className="flex items-center flex-col flex-wrap gap-5 md:max-w-min">

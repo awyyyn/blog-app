@@ -53,3 +53,24 @@ export const searchUsersResolver = async (_, { query }: { query: string }) => {
     throw new GraphQLError(error);
   }
 };
+
+export const getLikedPostByUserResolver = async (
+  _,
+  { userId }: { userId: string }
+) => {
+  try {
+    const liked_posts = await prisma.postLikes.findMany({
+      where: {
+        user: { id: userId },
+      },
+      include: {
+        post: true,
+        user: true,
+      },
+    });
+    return liked_posts;
+  } catch (error) {
+    console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};

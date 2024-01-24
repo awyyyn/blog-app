@@ -4,10 +4,17 @@ export const typeDefs = gql`
   type Query {
     getUsers: [User]
     getPosts: [Post]
-    getCommentsByPostId(postId: String): [Comment]
+    getCommentsByPostId(postId: String, offset: Int): [Comment]
     getPostById(id: String): Post
     searchUsers(query: String!): [User]
     getPostsWithPagination(offset: Int, limit: Int): [Post]
+    getLikedPostByUser(userId: ID!): [PostLikes]
+    getTotalLikesByPostId(postId: ID!): PostLikes
+    getLikedPostByPostId(postId: String): exists
+  }
+
+  type exists {
+    exists: Boolean
   }
 
   type Mutation {
@@ -17,6 +24,20 @@ export const typeDefs = gql`
     createPost(postInput: postInput): Post!
     #creates a comment
     createComment(commentInput: commentInput): Comment!
+    #like post
+    likePost(likePostInput: likePostInput): PostLikes
+    # #like comment
+    # likeComment(userId: ID!): Comment
+  }
+
+  input likePostInput {
+    userId: ID!
+    postId: ID!
+  }
+
+  type Subscription {
+    postCreated: Post
+    commentAdded(postId: ID!): Comment!
   }
 
   input userInput {
@@ -38,6 +59,12 @@ export const typeDefs = gql`
     comment: String
   }
 
+  type PostLikes {
+    id: ID!
+    user: User
+    post: Post
+  }
+
   type User {
     id: ID
     firstname: String!
@@ -47,23 +74,37 @@ export const typeDefs = gql`
     profile: String
     createdAt: String!
     updatedAt: String!
+
+    liked_posts: [PostLikes]
+    comments: [Comment]
+    _count: Count
   }
 
   type Post {
     id: ID!
     description: String
     author: User
-    comments: [Comment]
     likes: Int
     title: String!
     createdAt: String!
     updatedAt: String!
+
+    comments: [Comment]
+    _count: Count
+    liked_by: [PostLikes]
   }
 
   type Comment {
     id: ID!
     comment: String!
     post: Post
+    _count: Count
     user: User
+  }
+
+  type Count {
+    comments: Int
+    liked_by: Int
+    liked_posts: Int
   }
 `;
