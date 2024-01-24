@@ -4,12 +4,11 @@ import { LikePostInput, PostInput } from '@blog-app/shared';
 import pubsub from '../pubsub';
 
 export const getPostsResolver = async () => {
-  console.log('GET POSTS');
   try {
     const posts = await prisma.post.findMany({
       include: {
         author: true,
-
+        _count: true,
         // comments: true,
       },
     });
@@ -50,9 +49,9 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
     const post = await prisma.post.findFirst({
       where: { id },
       include: {
-        liked_by: true,
         author: true,
         comments: true,
+        _count: true,
       },
     });
     return post;
@@ -66,12 +65,12 @@ export const getPostsWithPaginationResolver = async (
   { limit, offset }: { offset: number; limit: number }
 ) => {
   try {
-    console.log('S');
     const post = await prisma.post.findMany({
       skip: offset,
       take: limit,
       include: {
         author: true,
+        _count: true,
       },
     });
     return post;
@@ -124,6 +123,25 @@ export const getTotalLikesByPostIdResolver = async (
     return total_likes;
   } catch (error) {
     console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};
+
+export const getLikedPostByPostIdResolver = async (
+  _,
+  { postId }: { postId: string }
+) => {
+  try {
+    const data = await prisma.postLikes.findFirst({
+      where: {
+        postId: postId,
+      },
+    });
+
+    return {
+      exists: Boolean(data),
+    };
+  } catch (error) {
     throw new GraphQLError(error);
   }
 };

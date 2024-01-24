@@ -54,6 +54,9 @@ export function Post() {
     variables: {
       id: params.id,
     },
+    onCompleted(data) {
+      setLiked(data.getLikedPostByPostId.exists);
+    },
   });
 
   /* LIKE MUTATION */
@@ -101,8 +104,6 @@ export function Post() {
     });
     setLiked(true);
   };
-
-  console.log(data.getPostById);
 
   return (
     <div className={styles['container']}>
@@ -152,13 +153,13 @@ export function Post() {
             )}
           </Button>
           <p className="font-semibold text-default-400  ">
-            {data.getPostById.comments.length}
+            {data.getPostById._count.liked_by}
           </p>
           <p className="ml-2 text-default-400 ">Likes</p>
         </div>
         <div className="flex items-center">
           <p className="font-semibold text-default-400  ">
-            {data.getPostById.comments.length}
+            {data.getPostById._count.comments}
           </p>
           <p className="ml-2 text-default-400  ">Comments</p>
         </div>
@@ -189,7 +190,7 @@ export function Post() {
       <Suspense fallback={<CommentsSpinner />}>
         <Comments comments={comments} />
       </Suspense>
-      {data.getPostById.comments.length !==
+      {data.getPostById._count.comments !==
         comments_data?.getCommentsByPostId.length &&
         comments_data?.getCommentsByPostId.length >= 10 && (
           <Button

@@ -10,6 +10,11 @@ export const typeDefs = gql`
     getPostsWithPagination(offset: Int, limit: Int): [Post]
     getLikedPostByUser(userId: ID!): [PostLikes]
     getTotalLikesByPostId(postId: ID!): PostLikes
+    getLikedPostByPostId(postId: String): exists
+  }
+
+  type exists {
+    exists: Boolean
   }
 
   type Mutation {
@@ -72,6 +77,7 @@ export const typeDefs = gql`
 
     liked_posts: [PostLikes]
     comments: [Comment]
+    _count: Count
   }
 
   type Post {
@@ -84,7 +90,7 @@ export const typeDefs = gql`
     updatedAt: String!
 
     comments: [Comment]
-
+    _count: Count
     liked_by: [PostLikes]
   }
 
@@ -92,6 +98,13 @@ export const typeDefs = gql`
     id: ID!
     comment: String!
     post: Post
+    _count: Count
     user: User
+  }
+
+  type Count {
+    comments: Int
+    liked_by: Int
+    liked_posts: Int
   }
 `;

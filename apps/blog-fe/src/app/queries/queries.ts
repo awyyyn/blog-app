@@ -47,6 +47,9 @@ export const ADD_COMMENT = gql`
 
 export const GET_POST = gql`
   query GetPostById($id: String!) {
+    getLikedPostByPostId(postId: $id) {
+      exists
+    }
     getPostById(id: $id) {
       id
       description
@@ -56,13 +59,9 @@ export const GET_POST = gql`
         firstname
         lastname
       }
-      comments {
-        id
-      }
-      liked_by {
-        user {
-          id
-        }
+      _count {
+        comments
+        liked_by
       }
       createdAt
       updatedAt

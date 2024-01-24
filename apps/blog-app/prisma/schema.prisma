@@ -37,6 +37,8 @@ model PostLikes {
   user User @relation(name: "PostsLiked", fields: [userId], references: [id])
   postId String @db.ObjectId
   post Post @relation(name: "LikedPost", fields: [postId], references: [id])
+
+  @@unique([userId, postId])
 }
 
 model Post {
