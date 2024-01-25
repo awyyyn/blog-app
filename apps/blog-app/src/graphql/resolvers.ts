@@ -12,6 +12,7 @@ import {
   likePostResolver,
   getTotalLikesByPostIdResolver,
   getLikedPostByPostIdResolver,
+  unlikePostResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
@@ -45,5 +46,6 @@ export const resolvers = {
     createPost: createPostResolver,
     createComment: createCommentResolver,
     likePost: likePostResolver,
+    unlikePost: unlikePostResolver,
   },
 };

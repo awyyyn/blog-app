@@ -47,9 +47,6 @@ export const ADD_COMMENT = gql`
 
 export const GET_POST = gql`
   query GetPostById($id: String!) {
-    getLikedPostByPostId(postId: $id) {
-      exists
-    }
     getPostById(id: $id) {
       id
       description
@@ -65,6 +62,10 @@ export const GET_POST = gql`
       }
       createdAt
       updatedAt
+    }
+    getLikedPostByPostId(postId: $id) {
+      exists
+      liked_post_id
     }
   }
 `;
@@ -86,6 +87,14 @@ export const LIKE_POST = gql`
   mutation LikePost($likePostInput: likePostInput) {
     likePost(likePostInput: $likePostInput) {
       id
+    }
+  }
+`;
+
+export const UNLIKE_POST = gql`
+  mutation UnlikePost($liked_post_id: ID!) {
+    unlikePost(id: $liked_post_id) {
+      success
     }
   }
 `;

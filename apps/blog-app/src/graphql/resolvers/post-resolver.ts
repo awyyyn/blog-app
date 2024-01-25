@@ -100,7 +100,6 @@ export const likePostResolver = async (
         user: true,
       },
     });
-    console.log(like_post);
     return like_post;
   } catch (error) {
     console.log(error.message);
@@ -138,8 +137,31 @@ export const getLikedPostByPostIdResolver = async (
       },
     });
 
+    if (data) {
+      return {
+        exists: Boolean(data),
+        liked_post_id: data.id,
+      };
+    } else {
+      return {
+        exists: Boolean(data),
+      };
+    }
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};
+
+export const unlikePostResolver = async (_, { id }: { id: string }) => {
+  try {
+    await prisma.postLikes.delete({
+      where: {
+        id,
+      },
+    });
+
     return {
-      exists: Boolean(data),
+      success: true,
     };
   } catch (error) {
     throw new GraphQLError(error);

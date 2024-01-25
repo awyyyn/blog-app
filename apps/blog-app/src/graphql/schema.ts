@@ -10,11 +10,12 @@ export const typeDefs = gql`
     getPostsWithPagination(offset: Int, limit: Int): [Post]
     getLikedPostByUser(userId: ID!): [PostLikes]
     getTotalLikesByPostId(postId: ID!): PostLikes
-    getLikedPostByPostId(postId: String): exists
+    getLikedPostByPostId(postId: String): LikedPostResult
   }
 
-  type exists {
+  type LikedPostResult {
     exists: Boolean
+    liked_post_id: ID
   }
 
   type Mutation {
@@ -26,8 +27,13 @@ export const typeDefs = gql`
     createComment(commentInput: commentInput): Comment!
     #like post
     likePost(likePostInput: likePostInput): PostLikes
+    unlikePost(id: ID!): DeleteResult
     # #like comment
     # likeComment(userId: ID!): Comment
+  }
+
+  type DeleteResult {
+    success: Boolean
   }
 
   input likePostInput {

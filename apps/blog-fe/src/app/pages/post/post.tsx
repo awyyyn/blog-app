@@ -13,6 +13,7 @@ import {
   GET_POST,
   LIKE_POST,
   SUBSCRIBE_COMMENT,
+  UNLIKE_POST,
 } from '../../queries/queries';
 import { CommentsSpinner } from '../../components/comments/comments';
 const Comments = lazy(() => import('../../components/comments/comments'));
@@ -60,7 +61,8 @@ export function Post() {
   });
 
   /* LIKE MUTATION */
-  const [like_post] = useMutation(LIKE_POST);
+  const [like_post, { data: liked_data }] = useMutation(LIKE_POST);
+  const [unlike_post] = useMutation(UNLIKE_POST);
 
   useEffect(() => {
     if (comments_data) {
@@ -75,8 +77,6 @@ export function Post() {
       },
     });
   };
-
-  if (loading) return <h1>loadingg...</h1>;
 
   const handleAddComment = async () => {
     if (!comment) return;
@@ -94,16 +94,31 @@ export function Post() {
   };
 
   const handleLikePost = () => {
-    like_post({
-      variables: {
-        likePostInput: {
-          userId: '65af33af1f968b8d0aaa174b',
-          postId: params.id,
+    if (!liked) {
+      like_post({
+        variables: {
+          likePostInput: {
+            userId: '65af33af1f968b8d0aaa174b',
+            postId: params.id,
+          },
         },
-      },
-    });
-    setLiked(true);
+      });
+      setLiked(true);
+    } else {
+      unlike_post({
+        variables: {
+          liked_post_id: liked_data
+            ? liked_data.likePost.id
+            : data.getLikedPostByPostId.liked_post_id,
+        },
+      });
+      setLiked(false);
+    }
   };
+
+  if (loading) return <h1>loadingg...</h1>;
+
+  console.log(liked_data && liked_data.likePost.id);
 
   return (
     <div className={styles['container']}>
