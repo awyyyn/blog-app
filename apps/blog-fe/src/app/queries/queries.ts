@@ -98,3 +98,12 @@ export const UNLIKE_POST = gql`
     }
   }
 `;
+
+export const SUBSCRIBE_POST_LIKE = gql`
+  subscription PostLiked($postId: ID!) {
+    postLiked(postId: $postId) {
+      postId
+      type
+    }
+  }
+`;

@@ -44,6 +44,17 @@ export const typeDefs = gql`
   type Subscription {
     postCreated: Post
     commentAdded(postId: ID!): Comment!
+    postLiked(postId: ID!): postLiked
+  }
+
+  type postLiked {
+    type: Type
+    postId: ID!
+  }
+
+  enum Type {
+    LIKE
+    UNLIKE
   }
 
   input userInput {

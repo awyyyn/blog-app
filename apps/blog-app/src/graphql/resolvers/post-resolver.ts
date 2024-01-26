@@ -100,6 +100,14 @@ export const likePostResolver = async (
         user: true,
       },
     });
+
+    pubsub.publish('POST_LIKED', {
+      postLiked: {
+        type: 'LIKE',
+        postId: like_post.postId,
+      },
+    });
+
     return like_post;
   } catch (error) {
     console.log(error.message);
@@ -118,7 +126,6 @@ export const getTotalLikesByPostIdResolver = async (
       },
       _count: true,
     });
-    console.log(total_likes);
     return total_likes;
   } catch (error) {
     console.log(error.message);
@@ -154,9 +161,17 @@ export const getLikedPostByPostIdResolver = async (
 
 export const unlikePostResolver = async (_, { id }: { id: string }) => {
   try {
-    await prisma.postLikes.delete({
+    const unliked_post = await prisma.postLikes.delete({
       where: {
         id,
+      },
+    });
+
+    console.log(unliked_post);
+    pubsub.publish('POST_LIKED', {
+      postLiked: {
+        type: 'UNLIKE',
+        postId: unliked_post.postId,
       },
     });
 

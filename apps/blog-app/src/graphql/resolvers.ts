@@ -20,6 +20,7 @@ import {
 } from './resolvers/comment-resolver';
 import pubsub from './pubsub';
 import { commentSubscriptionResolver } from './resolvers/comment-subscription-resolver';
+import { postSubscriptionResolver } from './resolvers/post-subscription-resolver';
 
 export const resolvers = {
   Query: {
@@ -39,6 +40,7 @@ export const resolvers = {
       subscribe: () => pubsub.asyncIterator(['POST_CREATED']),
     },
     commentAdded: commentSubscriptionResolver,
+    postLiked: postSubscriptionResolver,
   },
 
   Mutation: {

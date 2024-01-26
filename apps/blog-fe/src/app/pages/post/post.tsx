@@ -13,6 +13,7 @@ import {
   GET_POST,
   LIKE_POST,
   SUBSCRIBE_COMMENT,
+  SUBSCRIBE_POST_LIKE,
   UNLIKE_POST,
 } from '../../queries/queries';
 import { CommentsSpinner } from '../../components/comments/comments';
@@ -23,7 +24,7 @@ export function Post() {
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState<CommentType[]>([]);
-
+  const [likes, setLikes] = useState(0);
   const [add_comment, { loading: adding_comment }] = useMutation(ADD_COMMENT);
 
   /* SUBSCRIBE COMMENT */
@@ -31,10 +32,24 @@ export function Post() {
     variables: { postid: params.id },
     onData(options) {
       if (options.data.error) return console.log(options);
+
       setComments((prevComment) => [
         options.data.data.commentAdded,
         ...prevComment,
       ]);
+    },
+  });
+
+  /* SUBSCRIBE LIKE/UNLIKE POST */
+  useSubscription(SUBSCRIBE_POST_LIKE, {
+    variables: { postId: params.id },
+    onData(options) {
+      if (options.data.error) return console.log(options);
+      if (options.data.data.postLiked.type === 'LIKE') {
+        setLikes((likes) => likes + 1);
+      } else {
+        setLikes((likes) => likes - 1);
+      }
     },
   });
 
@@ -57,6 +72,7 @@ export function Post() {
     },
     onCompleted(data) {
       setLiked(data.getLikedPostByPostId.exists);
+      setLikes(data.getPostById._count.liked_by);
     },
   });
 
@@ -118,8 +134,6 @@ export function Post() {
 
   if (loading) return <h1>loadingg...</h1>;
 
-  console.log(liked_data && liked_data.likePost.id);
-
   return (
     <div className={styles['container']}>
       <div className="flex gap-x-3">
@@ -167,9 +181,7 @@ export function Post() {
               />
             )}
           </Button>
-          <p className="font-semibold text-default-400  ">
-            {data.getPostById._count.liked_by}
-          </p>
+          <p className="font-semibold text-default-400  ">{likes}</p>
           <p className="ml-2 text-default-400 ">Likes</p>
         </div>
         <div className="flex items-center">
