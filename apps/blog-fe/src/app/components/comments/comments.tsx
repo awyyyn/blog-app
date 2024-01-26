@@ -28,9 +28,9 @@ function Comments({ comments }: CommentsProps) {
   return (
     <div className="space-y-5 mt-5">
       {comments &&
-        comments?.map((comment) => (
+        comments?.map((comment, indx) => (
           <Comment
-            key={comment.id}
+            key={indx}
             comment={comment.comment}
             name={`${comment?.user?.firstname} ${comment?.user?.lastname}`}
             // name={'asd'}
