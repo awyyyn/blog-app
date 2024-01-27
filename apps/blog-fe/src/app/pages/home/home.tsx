@@ -16,10 +16,11 @@ export function Home() {
       offset: 0,
       userId: '65af33af1f968b8d0aaa174b',
     },
+    pollInterval: 30000,
   });
 
   /* LIKE MUTATION */
-  const [like_post, { data: liked_data }] = useMutation(LIKE_POST, {
+  const [like_post] = useMutation(LIKE_POST, {
     refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],
   });
   const [unlike_post] = useMutation(UNLIKE_POST, {
@@ -67,7 +68,7 @@ export function Home() {
             />
           </Suspense>
         ))}
-      {data.getPostsWithPagination.length === (20 || 40) && (
+      {data.getPostsWithPagination.length >= 20 && (
         <button
           onClick={() => {
             fetchMore({

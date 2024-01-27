@@ -2,7 +2,7 @@ import styles from './post.module.css';
 import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import UserAvatar from '../../components/user-avatar/user-avatar';
-import { Button, Divider, Input } from '@nextui-org/react';
+import { Button, Divider, Input, Spinner } from '@nextui-org/react';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { VscSend } from 'react-icons/vsc';
 import { Suspense, lazy, useEffect, useState } from 'react';
@@ -17,9 +17,11 @@ import {
   UNLIKE_POST,
 } from '../../queries/queries';
 import { CommentsSpinner } from '../../components/comments/comments';
+// import { userStore } from '../../store/userStore';
 const Comments = lazy(() => import('../../components/comments/comments'));
 
 export function Post() {
+  // const { user } = userStore();
   const params = useParams();
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState('');
@@ -59,6 +61,7 @@ export function Post() {
     fetchMore,
     data: comments_data,
     loading: loading_comments,
+    refetch: refetch_comments,
   } = useQuery(GET_COMMENTS, {
     variables: { postId: params.id, offset: 0 },
     onError(error) {
@@ -67,7 +70,11 @@ export function Post() {
   });
 
   /* GET POST */
-  const { data, loading } = useQuery(GET_POST, {
+  const {
+    data,
+    loading,
+    refetch: refetch_post,
+  } = useQuery(GET_POST, {
     variables: {
       id: params.id,
     },
@@ -79,7 +86,7 @@ export function Post() {
   });
 
   /* LIKE MUTATION */
-  const [like_post, { data: liked_data }] = useMutation(LIKE_POST);
+  const [like_post] = useMutation(LIKE_POST);
   const [unlike_post] = useMutation(UNLIKE_POST);
 
   useEffect(() => {
@@ -87,6 +94,11 @@ export function Post() {
       setComments(comments_data.getCommentsByPostId);
     }
   }, [comments_data]);
+
+  useEffect(() => {
+    refetch_post();
+    refetch_comments();
+  }, [params]);
 
   const handleFetchMore = () => {
     fetchMore({
@@ -125,16 +137,15 @@ export function Post() {
     } else {
       unlike_post({
         variables: {
-          liked_post_id: liked_data
-            ? liked_data.likePost.id
-            : data.getLikedPostByPostId.liked_post_id,
+          userId: '65af33af1f968b8d0aaa174b',
+          postId: params.id,
         },
       });
       setLiked(false);
     }
   };
 
-  if (loading) return <h1>loadingg...</h1>;
+  if (loading) return <Spinner />;
 
   return (
     <div className={styles['container']}>
@@ -214,9 +225,13 @@ export function Post() {
           }
         />
       </div>
-      <Suspense fallback={<CommentsSpinner />}>
-        <Comments comments={comments} />
-      </Suspense>
+      {loading_comments ? (
+        <CommentsSpinner />
+      ) : (
+        <Suspense fallback={<CommentsSpinner />}>
+          <Comments comments={comments} />
+        </Suspense>
+      )}
       {data.getPostById._count.comments !==
         comments_data?.getCommentsByPostId.length &&
         comments_data?.getCommentsByPostId.length >= 10 && (

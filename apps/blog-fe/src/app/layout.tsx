@@ -6,22 +6,23 @@ import { userStore } from './store/userStore';
 
 const Layout = () => {
   const { setUserInfo } = userStore();
-  const { isAuthenticated, user } = useAuth0();
+  const { user } = useAuth0();
   useEffect(() => {
     (async () => {
-      const userInput = { email: user?.email, profile: user?.picture };
-      const result = await fetch('http://localhost:3000/api/auth/register', {
-        body: JSON.stringify(userInput),
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
-      const data = await result.json();
-      console.log(data, 'data');
-      setUserInfo(data.data);
+      if (user !== undefined) {
+        const userInput = { email: user?.email, profile: user?.picture };
+        const result = await fetch('http://localhost:3000/api/auth/register', {
+          body: JSON.stringify(userInput),
+          method: 'POST',
+          headers: {
+            'Content-type': 'application/json',
+          },
+        });
+        const data = await result.json();
+        setUserInfo(data.data);
+      }
     })();
-  }, [isAuthenticated]);
+  }, []);
   return (
     <div>
       <header>

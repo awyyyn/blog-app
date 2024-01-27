@@ -10,16 +10,12 @@ interface CommentsProps {
 export const CommentsSpinner = () => {
   return (
     <div className="space-y-5 mt-5">
-      {[1, 2, 3].map((i) => {
-        return (
-          <div key={i} className="flex w-full  flex-nowrap mb-6 md:mb-0 gap-3">
-            <Skeleton className="rounded-full h-9 w-9" />
-            <div className="-space-y-0.5  bg-stone-100 w-full rounded-xl">
-              <Skeleton className="w-full h-14 rounded-2xl" />
-            </div>
-          </div>
-        );
-      })}
+      <div className="flex w-full  flex-nowrap mb-6 md:mb-0 gap-3">
+        <Skeleton className="rounded-full h-9 w-9" />
+        <div className="-space-y-0.5  bg-stone-100 w-full rounded-xl">
+          <Skeleton className="w-full h-14 rounded-2xl" />
+        </div>
+      </div>
     </div>
   );
 };

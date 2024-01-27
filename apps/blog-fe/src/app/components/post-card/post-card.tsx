@@ -1,5 +1,4 @@
 // import styles from './post-card.module.css';
-import { useMutation, useSubscription } from '@apollo/client';
 import { PaginationResult } from '@blog-app/shared';
 import {
   Card,
@@ -32,7 +31,6 @@ export function PostCard({
   liked,
 }: PostCardProps) {
   const [isFollowed, setIsFollowed] = useState(false);
-  // const [liked, setLiked] = useState(liked)
   const navigate = useNavigate();
 
   const handleNavigate = () => navigate(`/post/${id}`);
@@ -115,7 +113,9 @@ export function PostCard({
           <p className="text-default-400 text-small">Likes</p>
         </div>
         <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">0</p>
+          <p className="font-semibold text-default-400 text-small">
+            {_count?.comments}
+          </p>
           <p className="text-default-400 text-small">Comments</p>
         </div>
       </CardFooter>
