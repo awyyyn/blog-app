@@ -62,18 +62,31 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
 
 export const getPostsWithPaginationResolver = async (
   _,
-  { limit, offset }: { offset: number; limit: number }
+  { limit, offset, userId }: { offset: number; limit: number; userId: string }
 ) => {
   try {
-    const post = await prisma.post.findMany({
+    const posts = await prisma.post.findMany({
       skip: offset,
       take: limit,
       include: {
+        liked_by: {
+          select: {
+            userId: true,
+          },
+        },
         author: true,
         _count: true,
       },
     });
-    return post;
+
+    return posts.flatMap((post) => {
+      const liked = post.liked_by.find((i) => i.userId === userId);
+
+      return {
+        ...post,
+        liked: Boolean(liked),
+      };
+    });
   } catch (error) {
     console.log(error.message);
     throw new GraphQLError(error);
@@ -86,6 +99,7 @@ export const likePostResolver = async (
 ) => {
   try {
     // const post = await prisma.user.update({});
+    console.log(likePostInput);
     const like_post = await prisma.postLikes.create({
       data: {
         user: {
@@ -159,15 +173,23 @@ export const getLikedPostByPostIdResolver = async (
   }
 };
 
-export const unlikePostResolver = async (_, { id }: { id: string }) => {
+export const unlikePostResolver = async (
+  _,
+  { userId, postId }: { userId: string; postId: string }
+) => {
+  console.log(userId, postId);
   try {
-    const unliked_post = await prisma.postLikes.delete({
+    const getById = await prisma.postLikes.findFirst({
       where: {
-        id,
+        userId,
+        postId,
       },
     });
 
-    console.log(unliked_post);
+    const unliked_post = await prisma.postLikes.delete({
+      where: { id: getById.id },
+    });
+
     pubsub.publish('POST_LIKED', {
       postLiked: {
         type: 'UNLIKE',

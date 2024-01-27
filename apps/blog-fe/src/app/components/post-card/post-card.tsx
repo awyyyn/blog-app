@@ -1,4 +1,6 @@
 // import styles from './post-card.module.css';
+import { useMutation, useSubscription } from '@apollo/client';
+import { PaginationResult } from '@blog-app/shared';
 import {
   Card,
   CardHeader,
@@ -8,35 +10,29 @@ import {
   Button,
 } from '@nextui-org/react';
 import { useState } from 'react';
-import { AiOutlineHeart } from 'react-icons/ai';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
 /* eslint-disable-next-line */
-export interface PostCardProps {
-  author: {
-    username: string;
-    id: string;
-    firstname: string;
-    lastname: string;
-  };
-  id: string;
-  title: string;
-  description: string;
-  likes: number;
-  createdAt: string;
-  updatedAt: string;
+
+interface PostCardProps extends PaginationResult {
+  handleLike: (/* userId: string, postId: string */) => void;
+  // handleUnLike: (userId: string, postId: string) => void;
 }
 
 export function PostCard({
-  author,
-  title,
   createdAt,
-  description,
   id,
-  likes,
+  title,
   updatedAt,
+  _count,
+  description,
+  author,
+  handleLike,
+  liked,
 }: PostCardProps) {
   const [isFollowed, setIsFollowed] = useState(false);
+  // const [liked, setLiked] = useState(liked)
   const navigate = useNavigate();
 
   const handleNavigate = () => navigate(`/post/${id}`);
@@ -59,10 +55,10 @@ export function PostCard({
           />
           <div className="flex flex-col gap-1 items-start justify-center">
             <h4 className="text-small font-semibold leading-none text-default-600">
-              {author.firstname} {author.lastname}
+              {author?.firstname} {author?.lastname}
             </h4>
             <h5 className="text-small tracking-tight text-default-400">
-              {author.username}
+              {author?.username}
             </h5>
           </div>
         </div>
@@ -93,15 +89,29 @@ export function PostCard({
             className="bg-none border-none hover:bg-none"
             radius="full"
             size="sm"
+            onPress={handleLike}
           >
-            <AiOutlineHeart
-              color="#ff0000"
-              height={40}
-              scale={1.5}
-              width={40}
-            />
+            {liked ? (
+              <AiFillHeart
+                color="#ff0000"
+                style={{
+                  width: 18,
+                  height: 18,
+                }}
+              />
+            ) : (
+              <AiOutlineHeart
+                color="#00000090"
+                style={{
+                  width: 18,
+                  height: 18,
+                }}
+              />
+            )}
           </Button>
-          <p className="font-semibold text-default-400 text-small">{likes}</p>
+          <p className="font-semibold text-default-400 text-small">
+            {_count?.liked_by}
+          </p>
           <p className="text-default-400 text-small">Likes</p>
         </div>
         <div className="flex gap-1">

@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const GET_POSTS = gql`
-  query GetPostsWithPagination($offset: Int, $limit: Int) {
-    getPostsWithPagination(offset: $offset, limit: $limit) {
+/* export const GET_POSTS = gql`
+  query GetPostsWithPagination( ) {
+    getPosts {
       id
       description
       likes
@@ -14,6 +14,28 @@ export const GET_POSTS = gql`
         username
         firstname
         lastname
+      }
+    }
+  }
+`; */
+
+export const GET_POSTS_WITH_PAGINATION = gql`
+  query GetPostsWithPagination($offset: Int, $limit: Int, $userId: ID) {
+    getPostsWithPagination(offset: $offset, limit: $limit, userId: $userId) {
+      _count {
+        liked_by
+        comments
+      }
+      id
+      liked
+      description
+      updatedAt
+      createdAt
+      title
+      author {
+        firstname
+        lastname
+        username
       }
     }
   }
@@ -92,8 +114,8 @@ export const LIKE_POST = gql`
 `;
 
 export const UNLIKE_POST = gql`
-  mutation UnlikePost($liked_post_id: ID!) {
-    unlikePost(id: $liked_post_id) {
+  mutation UnlikePost($postId: ID!, $userId: ID!) {
+    unlikePost(userId: $userId, postId: $postId) {
       success
     }
   }
