@@ -1,16 +1,23 @@
 import React from 'react';
-import UserAvatar from '../user-avatar/user-avatar';
+import { User } from '@nextui-org/react';
 
 interface CommentProps {
   name: string;
   comment: string;
+  profile: string;
 }
 
-function Comment({ comment, name }: CommentProps) {
+function Comment({ comment, name, profile }: CommentProps) {
   return (
-    <div className="flex w-full  flex-nowrap mb-6 md:mb-0 gap-4">
-      <UserAvatar size="sm" />
-      <div className="-space-y-0.5 px-3 py-2 bg-stone-100 w-full rounded-xl">
+    <div className="flex w-full   items-baseline   flex-nowrap     ">
+      <User
+        name
+        avatarProps={{
+          size: 'sm',
+          src: profile,
+        }}
+      />
+      <div className="-space-y-0.5 px-3 self-center py-2 bg-stone-100 w-full rounded-xl">
         <h1 className="font-semibold text-default-500 text-small">{name}</h1>
         <p className="text-default-400 text-small">{comment}</p>
       </div>

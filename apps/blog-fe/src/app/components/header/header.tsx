@@ -20,9 +20,6 @@ const links = [
 export function Header(props: HeaderProps) {
   const { isAuthenticated } = useAuth0();
 
-  const { user } = userStore();
-  console.log(user);
-
   return (
     <Navbar className="top-0 fixed" isBordered isBlurred>
       <NavbarBrand>

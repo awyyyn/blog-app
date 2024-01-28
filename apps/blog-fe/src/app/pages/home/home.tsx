@@ -7,14 +7,16 @@ import {
   UNLIKE_POST,
 } from '../../queries/queries';
 import { PaginationResult } from '@blog-app/shared';
+import { userStore } from '../../store/userStore';
 const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
 export function Home() {
+  const { user } = userStore();
   const { fetchMore, data, loading } = useQuery(GET_POSTS_WITH_PAGINATION, {
     variables: {
       limit: 20,
       offset: 0,
-      userId: '65af33af1f968b8d0aaa174b',
+      userId: user.id,
     },
     pollInterval: 30000,
   });
@@ -35,7 +37,7 @@ export function Home() {
     like_post({
       variables: {
         likePostInput: {
-          userId: '65af33af1f968b8d0aaa174b',
+          userId: user.id,
           postId,
         },
       },
@@ -45,7 +47,7 @@ export function Home() {
   const handleUnlike = (postId: string) => {
     unlike_post({
       variables: {
-        userId: '65af33af1f968b8d0aaa174b',
+        userId: user.id,
         postId,
       },
     });

@@ -2,7 +2,7 @@ import styles from './post.module.css';
 import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import UserAvatar from '../../components/user-avatar/user-avatar';
-import { Button, Divider, Input, Spinner } from '@nextui-org/react';
+import { Button, Divider, Input, Spinner, User } from '@nextui-org/react';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { VscSend } from 'react-icons/vsc';
 import { Suspense, lazy, useEffect, useState } from 'react';
@@ -17,11 +17,12 @@ import {
   UNLIKE_POST,
 } from '../../queries/queries';
 import { CommentsSpinner } from '../../components/comments/comments';
-// import { userStore } from '../../store/userStore';
+import { userStore } from '../../store/userStore';
 const Comments = lazy(() => import('../../components/comments/comments'));
 
 export function Post() {
-  // const { user } = userStore();
+  const { user } = userStore();
+
   const params = useParams();
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState('');
@@ -113,8 +114,7 @@ export function Post() {
     await add_comment({
       variables: {
         commentInput: {
-          /* temporary */
-          userId: '65af33af1f968b8d0aaa174b',
+          userId: user.id,
           postId: params.id,
           comment: comment,
         },
@@ -128,7 +128,7 @@ export function Post() {
       like_post({
         variables: {
           likePostInput: {
-            userId: '65af33af1f968b8d0aaa174b',
+            userId: user.id,
             postId: params.id,
           },
         },
@@ -137,7 +137,7 @@ export function Post() {
     } else {
       unlike_post({
         variables: {
-          userId: '65af33af1f968b8d0aaa174b',
+          userId: user.id,
           postId: params.id,
         },
       });
@@ -150,16 +150,13 @@ export function Post() {
   return (
     <div className={styles['container']}>
       <div className="flex gap-x-3">
-        <UserAvatar />
-        <div className="-space-y-1">
-          <h4 className="text-small font-semibold leading-none text-default-600">
-            {data.getPostById.author.firstname}{' '}
-            {data.getPostById.author.lastname}
-          </h4>
-          <h5 className="text-small tracking-tight text-default-400">
-            {data.getPostById.author.username}
-          </h5>
-        </div>
+        <User
+          name={`${data.getPostById.author.firstname} ${data.getPostById.author.lastname}`}
+          description={data.getPostById.author.username}
+          avatarProps={{
+            src: data.getPostById.author.profile,
+          }}
+        />
       </div>
       <Divider className="my-4 bg-stone-100" />
       <div>
@@ -203,8 +200,14 @@ export function Post() {
         </div>
       </div>
       <Divider className="mb-4 bg-stone-200" />
-      <div className="flex w-full   md:flex-nowrap mb-6 md:mb-0 gap-4">
-        <UserAvatar size="sm" />
+      <div className="flex w-full items-baseline  md:flex-nowrap    ">
+        <User
+          name
+          avatarProps={{
+            size: 'sm',
+            src: user.profile as string,
+          }}
+        />
         <Input
           type="text"
           value={comment}

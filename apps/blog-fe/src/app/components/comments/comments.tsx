@@ -22,11 +22,12 @@ export const CommentsSpinner = () => {
 
 function Comments({ comments }: CommentsProps) {
   return (
-    <div className="space-y-5 mt-5">
+    <div className="space-y-5  mt-5">
       {comments &&
         comments?.map((comment, indx) => (
           <Comment
             key={indx}
+            profile={comment.user?.profile as string}
             comment={comment.comment}
             name={`${comment?.user?.firstname} ${comment?.user?.lastname}`}
             // name={'asd'}

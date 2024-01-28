@@ -50,6 +50,7 @@ export const GET_COMMENTS = gql`
       user {
         firstname
         lastname
+        profile
       }
     }
   }
@@ -77,6 +78,7 @@ export const GET_POST = gql`
       author {
         username
         firstname
+        profile
         lastname
       }
       _count {

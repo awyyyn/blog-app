@@ -12,7 +12,7 @@ import { userStore } from '../../store/userStore';
 
 function UserNavBarContent() {
   const { logout } = useAuth0();
-  const { removeUserInfo } = userStore();
+  const { removeUserInfo, user } = userStore();
 
   const handleLogout = () => {
     logout();
@@ -29,7 +29,7 @@ function UserNavBarContent() {
               className: 'cursor-pointer',
               isBordered: true,
               name: 'asd',
-              src: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+              src: user.profile as string,
             }}
           />
         </DropdownTrigger>
