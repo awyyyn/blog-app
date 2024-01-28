@@ -33,6 +33,7 @@ export const GET_POSTS_WITH_PAGINATION = gql`
       createdAt
       title
       author {
+        profile
         firstname
         lastname
         username
@@ -126,6 +127,21 @@ export const SUBSCRIBE_POST_LIKE = gql`
     postLiked(postId: $postId) {
       postId
       type
+    }
+  }
+`;
+
+export const SEARCH_USER = gql`
+  query Query($query: String) {
+    searchUser(query: $query) {
+      data {
+        firstname
+        lastname
+        id
+        username
+        profile
+      }
+      count
     }
   }
 `;

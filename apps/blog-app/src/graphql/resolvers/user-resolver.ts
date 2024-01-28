@@ -27,33 +27,6 @@ export const getUserResolver = async () => {
   }
 };
 
-export const searchUsersResolver = async (_, { query }: { query: string }) => {
-  try {
-    const user = prisma.user.findMany({
-      where: {
-        OR: [
-          {
-            email: { contains: query },
-          },
-          {
-            username: { contains: query },
-          },
-          {
-            firstname: { contains: query },
-          },
-          {
-            lastname: { contains: query },
-          },
-        ],
-      },
-    });
-
-    return user;
-  } catch (error) {
-    throw new GraphQLError(error);
-  }
-};
-
 export const getLikedPostByUserResolver = async (
   _,
   { userId }: { userId: string }
@@ -71,6 +44,52 @@ export const getLikedPostByUserResolver = async (
     return liked_posts;
   } catch (error) {
     console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};
+
+export const searchUserResolver = async (_, { query }: { query: string }) => {
+  try {
+    const result = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            firstname: {
+              startsWith: query,
+            },
+          },
+          {
+            lastname: {
+              startsWith: query,
+            },
+          },
+          {
+            email: {
+              startsWith: query,
+            },
+          },
+          {
+            username: {
+              startsWith: query,
+            },
+          },
+          {
+            Post: {
+              some: {
+                title: {
+                  startsWith: query,
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+    return {
+      data: result,
+      count: result.length,
+    };
+  } catch (error) {
     throw new GraphQLError(error);
   }
 };

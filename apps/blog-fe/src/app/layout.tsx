@@ -3,6 +3,7 @@ import Header from './components/header/header';
 import { Outlet } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { userStore } from './store/userStore';
+import Aside from './components/aside/aside';
 
 const Layout = () => {
   const { setUserInfo } = userStore();
@@ -28,8 +29,10 @@ const Layout = () => {
       <header>
         <Header />
       </header>
-      <aside className="hidden md:block h-screen fixed md:w-[230px] lg:w-[280px]  border-r"></aside>
-      <main className="py-20 ml-0  md:ml-[230px] lg:ml-[280px] px-10">
+      <aside className="hidden md:block h-screen fixed md:w-[200px] lg:w-[250px]  border-r">
+        <Aside />
+      </aside>
+      <main className="py-20 ml-0  md:ml-[200px] lg:ml-[250px] px-10">
         <Outlet />
       </main>
     </div>

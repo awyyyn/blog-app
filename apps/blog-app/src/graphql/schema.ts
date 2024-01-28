@@ -6,7 +6,6 @@ export const typeDefs = gql`
     getPosts: [Post]
     getCommentsByPostId(postId: String, offset: Int): [Comment]
     getPostById(id: String): Post
-    searchUsers(query: String!): [User]
     getPostsWithPagination(
       offset: Int
       limit: Int
@@ -15,6 +14,8 @@ export const typeDefs = gql`
     getLikedPostByUser(userId: ID!): [PostLikes]
     getTotalLikesByPostId(postId: ID!): PostLikes
     getLikedPostByPostId(postId: String): LikedPostResult
+
+    searchUser(query: String): searchResult
   }
 
   type LikedPostResult {
@@ -32,6 +33,11 @@ export const typeDefs = gql`
     _count: Count
     liked_by: [PostLikes]
     liked: Boolean
+  }
+
+  type searchResult {
+    data: [User]
+    count: Int
   }
 
   type Mutation {

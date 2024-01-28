@@ -6,12 +6,21 @@ import {
   Navbar,
   NavbarBrand,
   NavbarContent,
-  NavbarItem,
   Link,
+  Input,
+} from '@nextui-org/react';
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Avatar,
+  Button,
 } from '@nextui-org/react';
 import { Link as RouterLink } from 'react-router-dom';
 import SignInButton from '../sign-in-button/sign-in-button';
 import UserNavBarContent from './user-navbar-content';
+import useDebounce from '../../hooks/useDebounce';
+import { useState } from 'react';
+import { User } from '@blog-app/shared';
 export interface HeaderProps {}
 
 /* eslint-disable-next-line */
@@ -24,6 +33,10 @@ const links = [
 
 export function Header(props: HeaderProps) {
   const { isAuthenticated } = useAuth0();
+  const [query, setQuery] = useState('');
+  const { data, error, loading } = useDebounce(query);
+
+  console.log(data);
 
   return (
     <Navbar className="top-0 fixed" isBordered isBlurred>
@@ -33,21 +46,8 @@ export function Header(props: HeaderProps) {
         </Link>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" as={RouterLink} href="/">
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link as={RouterLink} href="#" aria-current="page" color="secondary">
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" as={RouterLink} href="/callback">
-            Integrations
-          </Link>
-        </NavbarItem>
+        {/* <input value={query} onChange={(e) => setQuery(e.target.value)} /> */}
+        {/* <Input onChange={(e) => setQuery(e.target.value)} /> */}
       </NavbarContent>
       {isAuthenticated ? <UserNavBarContent /> : <SignInButton />}
     </Navbar>
