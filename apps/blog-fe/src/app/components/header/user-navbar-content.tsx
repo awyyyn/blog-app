@@ -4,28 +4,33 @@ import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
-  Avatar,
   NavbarContent,
+  User,
 } from '@nextui-org/react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { userStore } from '../../store/userStore';
 
 function UserNavBarContent() {
   const { logout } = useAuth0();
+  const { removeUserInfo } = userStore();
 
-  const handleLogout = () => logout();
+  const handleLogout = () => {
+    logout();
+    removeUserInfo();
+  };
 
   return (
     <NavbarContent as="div" justify="end">
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
-          <Avatar
-            isBordered
-            as="button"
-            className="transition-transform"
-            color="secondary"
-            name="Jason Hughes"
-            size="sm"
-            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+          <User
+            name=""
+            avatarProps={{
+              className: 'cursor-pointer',
+              isBordered: true,
+              name: 'asd',
+              src: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+            }}
           />
         </DropdownTrigger>
         <DropdownMenu aria-label="Profile Actions" variant="flat">

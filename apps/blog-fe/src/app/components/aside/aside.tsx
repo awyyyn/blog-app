@@ -4,16 +4,15 @@ import { Link as RouterLink } from 'react-router-dom';
 import { RiHome5Line } from 'react-icons/ri';
 import { MdSavedSearch } from 'react-icons/md';
 
-const links = [
-  { path: '/', label: 'Home', Icon: <RiHome5Line /> },
-  { path: '/saved', label: 'Saved', Icon: <MdSavedSearch /> },
-  // { path: '/', label: 'Home',  },
-];
-
 const style = {
   width: 18,
   height: 18,
 };
+const links = [
+  { path: '/', label: 'Home', Icon: <RiHome5Line style={style} /> },
+  { path: '/saved', label: 'Saved', Icon: <MdSavedSearch style={style} /> },
+  // { path: '/', label: 'Home',  },
+];
 
 const Aside = () => {
   return (
@@ -23,6 +22,7 @@ const Aside = () => {
       </Link> */}
       {links.map(({ path, label, Icon }) => (
         <Button
+          key={path}
           startContent={Icon}
           variant="light"
           to={path}

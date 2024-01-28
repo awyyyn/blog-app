@@ -10,7 +10,7 @@ const Layout = () => {
   const { user } = useAuth0();
   useEffect(() => {
     (async () => {
-      if (user !== undefined) {
+      if (user) {
         const userInput = { email: user?.email, profile: user?.picture };
         const result = await fetch('http://localhost:3000/api/auth/register', {
           body: JSON.stringify(userInput),
@@ -20,10 +20,12 @@ const Layout = () => {
           },
         });
         const data = await result.json();
+        console.log(data, 'asdadasdsad');
         setUserInfo(data.data);
       }
     })();
   }, []);
+
   return (
     <div>
       <header>

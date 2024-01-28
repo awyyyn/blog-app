@@ -20,11 +20,10 @@ export const registerController = async (req: Request, res: Response) => {
           username,
         },
       });
-      console.log(createdUser);
-      return res.status(201).json({ message: 'user created' });
+      return res.status(201).json({ data: createdUser });
     }
 
-    return res.status(200).json({ message: 'user already exist' });
+    return res.status(200).json({ data: user });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });

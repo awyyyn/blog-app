@@ -2,25 +2,11 @@
 
 /* eslint-disable-next-line */
 import { useAuth0 } from '@auth0/auth0-react';
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  Link,
-  Input,
-} from '@nextui-org/react';
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Avatar,
-  Button,
-} from '@nextui-org/react';
+import { Navbar, NavbarBrand, NavbarContent, Link } from '@nextui-org/react';
 import { Link as RouterLink } from 'react-router-dom';
 import SignInButton from '../sign-in-button/sign-in-button';
 import UserNavBarContent from './user-navbar-content';
-import useDebounce from '../../hooks/useDebounce';
-import { useState } from 'react';
-import { User } from '@blog-app/shared';
+import { userStore } from '../../store/userStore';
 export interface HeaderProps {}
 
 /* eslint-disable-next-line */
@@ -33,10 +19,9 @@ const links = [
 
 export function Header(props: HeaderProps) {
   const { isAuthenticated } = useAuth0();
-  const [query, setQuery] = useState('');
-  const { data, error, loading } = useDebounce(query);
 
-  console.log(data);
+  const { user } = userStore();
+  console.log(user);
 
   return (
     <Navbar className="top-0 fixed" isBordered isBlurred>
