@@ -4,6 +4,7 @@ import Comment from '../comment/comment';
 import { Skeleton } from '@nextui-org/react';
 
 interface CommentsProps {
+  profile: string;
   comments: CommentType[];
 }
 
@@ -20,14 +21,14 @@ export const CommentsSpinner = () => {
   );
 };
 
-function Comments({ comments }: CommentsProps) {
+function Comments({ comments, profile }: CommentsProps) {
   return (
     <div className="space-y-5  mt-5">
       {comments &&
         comments?.map((comment, indx) => (
           <Comment
             key={indx}
-            profile={comment.user?.profile as string}
+            profile={comment.user?.profile ?? profile}
             comment={comment.comment}
             name={`${comment?.user?.firstname} ${comment?.user?.lastname}`}
             // name={'asd'}

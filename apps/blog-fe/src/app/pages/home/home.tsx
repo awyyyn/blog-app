@@ -20,7 +20,7 @@ export function Home() {
     },
     pollInterval: 30000,
   });
-
+  console.log(data);
   /* LIKE MUTATION */
   const [like_post] = useMutation(LIKE_POST, {
     refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],

@@ -24,7 +24,6 @@ export function PostCard({
   id,
   title,
   updatedAt,
-  profile,
   _count,
   description,
   author,

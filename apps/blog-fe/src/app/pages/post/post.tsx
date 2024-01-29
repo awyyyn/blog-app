@@ -232,7 +232,7 @@ export function Post() {
         <CommentsSpinner />
       ) : (
         <Suspense fallback={<CommentsSpinner />}>
-          <Comments comments={comments} />
+          <Comments profile={user.profile} comments={comments} />
         </Suspense>
       )}
       {data.getPostById._count.comments !==
