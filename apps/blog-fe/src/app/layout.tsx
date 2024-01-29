@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { userStore } from './store/userStore';
 import Aside from './components/aside/aside';
+import CreatePostModal from './components/create-post-modal/create-post-modal';
 
 const Layout = () => {
   const { setUserInfo } = userStore();
@@ -35,6 +36,7 @@ const Layout = () => {
         <Aside />
       </aside>
       <main className="py-20 ml-0  md:ml-[200px] lg:ml-[250px] px-10">
+        <CreatePostModal />
         <Outlet />
       </main>
     </div>
