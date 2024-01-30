@@ -147,3 +147,12 @@ export const SEARCH_USER = gql`
     }
   }
 `;
+
+export const CREATE_POST = gql`
+  mutation CreatePost($postInput: postInput) {
+    createPost(postInput: $postInput) {
+      id
+      description
+    }
+  }
+`;

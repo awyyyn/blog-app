@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
   Modal,
   ModalContent,
@@ -10,10 +10,46 @@ import {
   Textarea,
 } from '@nextui-org/react';
 import { useCreatePostStore } from '../../store/createPostStore';
+import { useMutation } from '@apollo/client';
+import { CREATE_POST } from '../../queries/queries';
+import { userStore } from '../../store/userStore';
 
 const CreatePostModal = () => {
   const { modal, setModal } = useCreatePostStore();
+  const { user } = userStore();
+  const [blog, setBlog] = useState({
+    title: '',
+    description: '',
+  });
+  const [createPost, { loading, error, data }] = useMutation(CREATE_POST);
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setBlog((blog) => ({
+      ...blog,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleCreatePost = async (close: () => void) => {
+    createPost({
+      variables: {
+        postInput: {
+          description: blog.description,
+          title: blog.title,
+          userId: user.id,
+        },
+      },
+    }).then((data) => {
+      close();
+      setBlog({
+        description: '',
+        title: '',
+      });
+    });
+  };
+
+  if (error) throw new Error(error.message);
+  console.log(data && data);
   return (
     <Modal isOpen={modal.isOpen} placement="top-center" onOpenChange={setModal}>
       <ModalContent>
@@ -24,14 +60,22 @@ const CreatePostModal = () => {
             </ModalHeader>
             <ModalBody>
               <Input
-                type="email"
+                value={blog.title}
+                name="title"
+                onChange={handleChange}
+                type="text"
+                disabled={loading}
                 label="Title"
                 labelPlacement="outside"
-                placeholder="Blog titlez"
+                placeholder="Blog title"
               />
               <Textarea
+                value={blog.description}
+                name="description"
+                onChange={handleChange}
                 type="text"
                 multiple
+                disabled={loading}
                 height={200}
                 label="Description"
                 labelPlacement="outside"
@@ -42,8 +86,12 @@ const CreatePostModal = () => {
               <Button color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button color="primary" onPress={onClose}>
-                Action
+              <Button
+                color="primary"
+                isLoading={loading}
+                onPress={() => handleCreatePost(onClose)}
+              >
+                Create
               </Button>
             </ModalFooter>
           </>
