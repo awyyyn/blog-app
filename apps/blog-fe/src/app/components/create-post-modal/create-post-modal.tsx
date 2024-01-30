@@ -5,7 +5,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Input,
   Button,
+  Textarea,
 } from '@nextui-org/react';
 import { useCreatePostStore } from '../../store/createPostStore';
 
@@ -21,16 +23,20 @@ const CreatePostModal = () => {
               Modal Title
             </ModalHeader>
             <ModalBody>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-                pulvinar risus non risus hendrerit venenatis. Pellentesque sit
-                amet hendrerit risus, sed porttitor quam.
-              </p>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-                pulvinar risus non risus hendrerit venenatis. Pellentesque sit
-                amet hendrerit risus, sed porttitor quam.
-              </p>
+              <Input
+                type="email"
+                label="Title"
+                labelPlacement="outside"
+                placeholder="Blog titlez"
+              />
+              <Textarea
+                type="text"
+                multiple
+                height={200}
+                label="Description"
+                labelPlacement="outside"
+                placeholder="Blog description..."
+              />
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
