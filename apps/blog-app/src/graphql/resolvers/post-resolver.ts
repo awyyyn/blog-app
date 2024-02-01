@@ -204,3 +204,21 @@ export const unlikePostResolver = async (
     throw new GraphQLError(error);
   }
 };
+
+export const savePostResolver = async (
+  _,
+  { postId, userId }: { userId: string; postId: string }
+) => {
+  try {
+    const post = await prisma.savedPost.create({
+      data: {
+        postId,
+        userId,
+      },
+    });
+
+    return post;
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};

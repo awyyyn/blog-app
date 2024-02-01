@@ -16,11 +16,18 @@ export const typeDefs = gql`
     getLikedPostByPostId(postId: String): LikedPostResult
 
     searchUser(query: String): searchResult
+    savePost(userId: ID!, postId: ID!): savedPost
   }
 
   type LikedPostResult {
     exists: Boolean
     liked_post_id: ID
+  }
+
+  type savedPost {
+    id: ID!
+    user: User
+    post: Post
   }
 
   type paginationResult {
