@@ -21,16 +21,30 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
-  followedBy    User[]    @relation("UserFollows", fields: [followedByIDs], references: [id])
-  followedByIDs String[]  @db.ObjectId
-  following     User[]    @relation("UserFollows", fields: [followingIDs], references: [id])
-  followingIDs  String[]  @db.ObjectId
+  followers Followers[]  @relation(name: "followers")
+  following Following[] @relation(name: "following")
 
   Post Post[] @relation(name: "PostAuthor")
   
   liked_posts PostLikes[] @relation(name: "PostsLiked" )
   save_post SavedPost[] @relation(name: "savedPostByUser")
 }
+
+
+model Followers {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  follower  User @relation(name: "followers", fields: [followerIds], references: [id])
+  followerIds String @db.ObjectId
+}
+
+model Following {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  following  User @relation(name: "following", fields: [followingIds], references: [id])
+  followingIds String @db.ObjectId 
+  
+}
+ 
+
 
 model SavedPost {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
