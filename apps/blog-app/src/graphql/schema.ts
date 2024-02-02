@@ -59,6 +59,7 @@ export const typeDefs = gql`
     unlikePost(userId: ID!, postId: ID!): DeleteResult
     # #like comment
     # likeComment(userId: ID!): Comment
+    followUser(userId: ID!, followId: ID!): User
   }
 
   type DeleteResult {
@@ -124,6 +125,9 @@ export const typeDefs = gql`
     liked_posts: [PostLikes]
     comments: [Comment]
     _count: Count
+
+    followedBy: [User]
+    following: [User]
   }
 
   type Post {

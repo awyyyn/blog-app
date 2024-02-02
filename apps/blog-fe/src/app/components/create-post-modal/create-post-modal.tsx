@@ -13,15 +13,17 @@ import { useCreatePostStore } from '../../store/createPostStore';
 import { useMutation } from '@apollo/client';
 import { CREATE_POST } from '../../queries/queries';
 import { userStore } from '../../store/userStore';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePostModal = () => {
+  const navigate = useNavigate();
   const { modal, setModal } = useCreatePostStore();
   const { user } = userStore();
   const [blog, setBlog] = useState({
     title: '',
     description: '',
   });
-  const [createPost, { loading, error, data }] = useMutation(CREATE_POST);
+  const [createPost, { loading, error }] = useMutation(CREATE_POST);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setBlog((blog) => ({
@@ -45,11 +47,12 @@ const CreatePostModal = () => {
         description: '',
         title: '',
       });
+      console.log(data, 'data');
+      navigate(`/post/${data.data.createPost.id}`);
     });
   };
 
   if (error) throw new Error(error.message);
-  console.log(data && data);
   return (
     <Modal isOpen={modal.isOpen} placement="top-center" onOpenChange={setModal}>
       <ModalContent>

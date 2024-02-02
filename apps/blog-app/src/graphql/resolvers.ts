@@ -3,6 +3,7 @@ import {
   getUserResolver,
   getLikedPostByUserResolver,
   searchUserResolver,
+  followUserResolver,
 } from './resolvers/user-resolver';
 import {
   getPostsResolver,
@@ -51,5 +52,6 @@ export const resolvers = {
     createComment: createCommentResolver,
     likePost: likePostResolver,
     unlikePost: unlikePostResolver,
+    followUser: followUserResolver,
   },
 };
