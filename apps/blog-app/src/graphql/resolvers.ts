@@ -1,21 +1,16 @@
 import {
   createUserResolver,
   getUserResolver,
-  getLikedPostByUserResolver,
   searchUserResolver,
   followUserResolver,
+  getLikedPostsByUserResolver,
 } from './resolvers/user-resolver';
 import {
   getPostsResolver,
   createPostResolver,
   getPostByIdResolver,
   getPostsWithPaginationResolver,
-  likePostResolver,
   getTotalLikesByPostIdResolver,
-  getLikedPostByPostIdResolver,
-  unlikePostResolver,
-  savePostResolver,
-  unsavePostResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
@@ -23,7 +18,16 @@ import {
 } from './resolvers/comment-resolver';
 import pubsub from './pubsub';
 import { commentSubscriptionResolver } from './resolvers/comment-subscription-resolver';
-import { postSubscriptionResolver } from './resolvers/post-subscription-resolver';
+// import { postSubscriptionResolver } from './resolvers/post-subscription-resolver';
+import {
+  savePostResolver,
+  unsavePostResolver,
+  savedPostsByUser,
+} from './resolvers/saving-post-resolver';
+import {
+  likePostResolver,
+  unlikePostResolver,
+} from './resolvers/liking-post-resolver';
 
 export const resolvers = {
   Query: {
@@ -32,11 +36,11 @@ export const resolvers = {
     getCommentsByPostId: getCommentsByPostIdResolver,
     getPostById: getPostByIdResolver,
     getPostsWithPagination: getPostsWithPaginationResolver,
-    getLikedPostByUser: getLikedPostByUserResolver,
+    getLikedPostsByUser: getLikedPostsByUserResolver,
     getTotalLikesByPostId: getTotalLikesByPostIdResolver,
-    getLikedPostByPostId: getLikedPostByPostIdResolver,
+    // getLikedPostByPostId: getLikedPostByPostIdResolver,
     searchUser: searchUserResolver,
-    // savePost: savePostResolver,
+    savedPostsByUser: savedPostsByUser,
   },
 
   Subscription: {
@@ -44,7 +48,7 @@ export const resolvers = {
       subscribe: () => pubsub.asyncIterator(['POST_CREATED']),
     },
     commentAdded: commentSubscriptionResolver,
-    postLiked: postSubscriptionResolver,
+    // postLiked: postSubscriptionResolver,
   },
 
   Mutation: {

@@ -29,55 +29,37 @@ model User {
   // @@unique([ userFollow ])
    
   Post Post[] @relation(name: "PostAuthor")
+   
+
+  saved_post_ids String[] @db.ObjectId
+  saved_post Post[] @relation(name: "SavedPosts", references: [id], fields: [saved_post_ids])
+
+  liked_posts_ids String[] @db.ObjectId
+  liked_posts Post[] @relation(name: "LikedPosts", fields: [liked_posts_ids], references: [id])
+}
+
   
-  liked_posts PostLikes[] @relation(name: "PostsLiked" )
-  save_post SavedPost[] @relation(name: "savedPostByUser")
-}
-
-
  
- 
-
-
-model SavedPost {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  user User @relation(name: "savedPostByUser", fields: [userId], references: [id])
-  postId String? @db.ObjectId
-  // post Post? @relation(name: "savedPost", references: [id], fields: [postId])
-  post Post? @relation(name: "savedPost", fields: [postId], references: [id])
-
-  @@unique([postId])
-}
-
-
-
-model PostLikes {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  user User @relation(name: "PostsLiked", fields: [userId], references: [id])
-  postId String @db.ObjectId
-  post Post @relation(name: "LikedPost", fields: [postId], references: [id])
-
-  @@unique([userId, postId])
-}
 
 model Post {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   comments    Comment[] 
-  saveBy      SavedPost? @relation(name: "savedPost")
+  // saveBy      SavedPost[] @relation(name: "savedPost")
   title       String
   description String
-  likes       Int?      @default(0)
+  likes       Int?      @default(0) // to remove
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   authorId String @db.ObjectId
   author   User   @relation(name: "PostAuthor", fields: [authorId], references: [id])
+  
+  saved_by_ids String[] @db.ObjectId
+  saved_by User[]  @relation(name: "SavedPosts", fields: [saved_by_ids], references: [id])
  
-
-  liked_by PostLikes[] @relation(name: "LikedPost")
-  // likedBy LikedPost[]
+  liked_by_ids String[] @db.ObjectId
+  liked_by User[] @relation(name: "LikedPosts", fields: [liked_by_ids], references: [id])
+   
 }
 
 
@@ -88,7 +70,6 @@ model Comment {
   postId    String   @db.ObjectId
   post      Post     @relation(fields: [postId], references: [id])
   userId    String   @db.ObjectId
-  user      User     @relation(name: "UserComment", fields: [userId], references: [id])
-  likes     Int?     @default(0)
+  user      User     @relation(name: "UserComment", fields: [userId], references: [id] )
   createdAt DateTime @default(now()) 
 }

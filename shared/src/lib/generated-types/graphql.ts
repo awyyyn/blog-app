@@ -34,20 +34,8 @@ export type Count = {
 
 export type DeleteResult = {
   __typename?: 'DeleteResult';
-  success?: Maybe<Scalars['Boolean']['output']>;
-};
-
-export type Follower = {
-  __typename?: 'Follower';
-  follower?: Maybe<User>;
-  id: Scalars['ID']['output'];
-  user?: Maybe<User>;
-};
-
-export type Following = {
-  __typename?: 'Following';
-  following?: Maybe<User>;
-  user?: Maybe<User>;
+  message?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['Int']['output']>;
 };
 
 export type LikedPostResult = {
@@ -63,7 +51,9 @@ export type Mutation = {
   createUser: User;
   followUser?: Maybe<User>;
   likePost?: Maybe<PostLikes>;
+  savePost?: Maybe<SavedPost>;
   unlikePost?: Maybe<DeleteResult>;
+  unsavePost?: Maybe<DeleteResult>;
 };
 
 
@@ -83,7 +73,7 @@ export type MutationCreateUserArgs = {
 
 
 export type MutationFollowUserArgs = {
-  followerId: Scalars['ID']['input'];
+  followId: Scalars['ID']['input'];
   userId: Scalars['ID']['input'];
 };
 
@@ -93,7 +83,19 @@ export type MutationLikePostArgs = {
 };
 
 
+export type MutationSavePostArgs = {
+  postId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+
 export type MutationUnlikePostArgs = {
+  postId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationUnsavePostArgs = {
   postId: Scalars['ID']['input'];
   userId: Scalars['ID']['input'];
 };
@@ -129,7 +131,7 @@ export type Query = {
   getPostsWithPagination?: Maybe<Array<Maybe<PaginationResult>>>;
   getTotalLikesByPostId?: Maybe<PostLikes>;
   getUsers?: Maybe<Array<Maybe<User>>>;
-  savePost?: Maybe<SavedPost>;
+  savedPostsByUser?: Maybe<Array<Maybe<Post>>>;
   searchUser?: Maybe<SearchResult>;
 };
 
@@ -167,8 +169,7 @@ export type QueryGetTotalLikesByPostIdArgs = {
 };
 
 
-export type QuerySavePostArgs = {
-  postId: Scalars['ID']['input'];
+export type QuerySavedPostsByUserArgs = {
   userId: Scalars['ID']['input'];
 };
 
@@ -236,6 +237,7 @@ export type PaginationResult = {
   id: Scalars['ID']['output'];
   liked?: Maybe<Scalars['Boolean']['output']>;
   liked_by?: Maybe<Array<Maybe<PostLikes>>>;
+  saved?: Maybe<Scalars['Boolean']['output']>;
   title: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
 };
@@ -347,8 +349,6 @@ export type ResolversTypes = {
   Comment: ResolverTypeWrapper<Comment>;
   Count: ResolverTypeWrapper<Count>;
   DeleteResult: ResolverTypeWrapper<DeleteResult>;
-  Follower: ResolverTypeWrapper<Follower>;
-  Following: ResolverTypeWrapper<Following>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   LikedPostResult: ResolverTypeWrapper<LikedPostResult>;
@@ -376,8 +376,6 @@ export type ResolversParentTypes = {
   Comment: Comment;
   Count: Count;
   DeleteResult: DeleteResult;
-  Follower: Follower;
-  Following: Following;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   LikedPostResult: LikedPostResult;
@@ -415,20 +413,8 @@ export type CountResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type DeleteResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteResult'] = ResolversParentTypes['DeleteResult']> = {
-  success?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type FollowerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Follower'] = ResolversParentTypes['Follower']> = {
-  follower?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type FollowingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Following'] = ResolversParentTypes['Following']> = {
-  following?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -442,9 +428,11 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createComment?: Resolver<ResolversTypes['Comment'], ParentType, ContextType, Partial<MutationCreateCommentArgs>>;
   createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, Partial<MutationCreatePostArgs>>;
   createUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationCreateUserArgs>>;
-  followUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'followerId' | 'userId'>>;
+  followUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'followId' | 'userId'>>;
   likePost?: Resolver<Maybe<ResolversTypes['PostLikes']>, ParentType, ContextType, Partial<MutationLikePostArgs>>;
+  savePost?: Resolver<Maybe<ResolversTypes['savedPost']>, ParentType, ContextType, RequireFields<MutationSavePostArgs, 'postId' | 'userId'>>;
   unlikePost?: Resolver<Maybe<ResolversTypes['DeleteResult']>, ParentType, ContextType, RequireFields<MutationUnlikePostArgs, 'postId' | 'userId'>>;
+  unsavePost?: Resolver<Maybe<ResolversTypes['DeleteResult']>, ParentType, ContextType, RequireFields<MutationUnsavePostArgs, 'postId' | 'userId'>>;
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
@@ -477,7 +465,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getPostsWithPagination?: Resolver<Maybe<Array<Maybe<ResolversTypes['paginationResult']>>>, ParentType, ContextType, Partial<QueryGetPostsWithPaginationArgs>>;
   getTotalLikesByPostId?: Resolver<Maybe<ResolversTypes['PostLikes']>, ParentType, ContextType, RequireFields<QueryGetTotalLikesByPostIdArgs, 'postId'>>;
   getUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
-  savePost?: Resolver<Maybe<ResolversTypes['savedPost']>, ParentType, ContextType, RequireFields<QuerySavePostArgs, 'postId' | 'userId'>>;
+  savedPostsByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, RequireFields<QuerySavedPostsByUserArgs, 'userId'>>;
   searchUser?: Resolver<Maybe<ResolversTypes['searchResult']>, ParentType, ContextType, Partial<QuerySearchUserArgs>>;
 };
 
@@ -512,6 +500,7 @@ export type PaginationResultResolvers<ContextType = any, ParentType extends Reso
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   liked?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   liked_by?: Resolver<Maybe<Array<Maybe<ResolversTypes['PostLikes']>>>, ParentType, ContextType>;
+  saved?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -540,8 +529,6 @@ export type Resolvers<ContextType = any> = {
   Comment?: CommentResolvers<ContextType>;
   Count?: CountResolvers<ContextType>;
   DeleteResult?: DeleteResultResolvers<ContextType>;
-  Follower?: FollowerResolvers<ContextType>;
-  Following?: FollowingResolvers<ContextType>;
   LikedPostResult?: LikedPostResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;

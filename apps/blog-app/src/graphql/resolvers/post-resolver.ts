@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma';
-import { LikePostInput, PostInput } from '@blog-app/shared';
+import { PostInput } from '@blog-app/shared';
 import pubsub from '../pubsub';
 
 export const getPostsResolver = async () => {
@@ -10,6 +10,7 @@ export const getPostsResolver = async () => {
         author: true,
         _count: true,
         // comments: true,
+        liked_by: true,
       },
     });
     return posts;
@@ -52,6 +53,7 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
         author: true,
         comments: true,
         _count: true,
+        liked_by: true,
       },
     });
     return post;
@@ -65,18 +67,17 @@ export const getPostsWithPaginationResolver = async (
   { limit, offset, userId }: { offset: number; limit: number; userId: string }
 ) => {
   try {
-    const posts = await prisma.post.findMany({
+    let posts = await prisma.post.findMany({
       skip: offset,
       take: limit,
       include: {
         liked_by: {
           select: {
-            userId: true,
+            id: true,
           },
         },
-        author: true,
-
         _count: true,
+        author: true,
       },
       where: {
         author: {
@@ -89,49 +90,21 @@ export const getPostsWithPaginationResolver = async (
       },
     });
 
-    return posts.flatMap((post) => {
-      const liked = post.liked_by.find((i) => i.userId === userId);
+    posts = posts.flatMap((post) => {
+      const liked = post.liked_by.find((i) => i.id === userId);
+      const saved = post.saved_by_ids.includes(userId);
+
+      console.log(saved, 'isSaved?');
 
       return {
         ...post,
         liked: Boolean(liked),
+        saved,
       };
     });
-  } catch (error) {
-    console.log(error.message);
-    throw new GraphQLError(error);
-  }
-};
+    // console.log(posts);
 
-export const likePostResolver = async (
-  _,
-  { likePostInput }: { likePostInput: LikePostInput }
-) => {
-  try {
-    // const post = await prisma.user.update({});
-    const like_post = await prisma.postLikes.create({
-      data: {
-        user: {
-          connect: { id: likePostInput.userId },
-        },
-        post: {
-          connect: { id: likePostInput.postId },
-        },
-      },
-      include: {
-        post: true,
-        user: true,
-      },
-    });
-
-    pubsub.publish('POST_LIKED', {
-      postLiked: {
-        type: 'LIKE',
-        postId: like_post.postId,
-      },
-    });
-
-    return like_post;
+    return posts;
   } catch (error) {
     console.log(error.message);
     throw new GraphQLError(error);
@@ -143,113 +116,17 @@ export const getTotalLikesByPostIdResolver = async (
   { postId }: { postId: string }
 ) => {
   try {
-    const total_likes = await prisma.postLikes.aggregate({
-      where: {
-        postId,
+    const total_likes = await prisma.post.findUnique({
+      include: {
+        _count: true,
       },
-      _count: true,
+      where: {
+        id: postId,
+      },
     });
-    return total_likes;
+    return total_likes._count;
   } catch (error) {
     console.log(error.message);
-    throw new GraphQLError(error);
-  }
-};
-
-export const getLikedPostByPostIdResolver = async (
-  _,
-  { postId }: { postId: string }
-) => {
-  try {
-    const data = await prisma.postLikes.findFirst({
-      where: {
-        postId: postId,
-      },
-    });
-
-    if (data) {
-      return {
-        exists: Boolean(data),
-        liked_post_id: data.id,
-      };
-    } else {
-      return {
-        exists: Boolean(data),
-      };
-    }
-  } catch (error) {
-    throw new GraphQLError(error);
-  }
-};
-
-export const unlikePostResolver = async (
-  _,
-  { userId, postId }: { userId: string; postId: string }
-) => {
-  console.log(userId, postId);
-  try {
-    const getById = await prisma.postLikes.findFirst({
-      where: {
-        userId,
-        postId,
-      },
-    });
-
-    const unliked_post = await prisma.postLikes.delete({
-      where: { id: getById.id },
-    });
-
-    pubsub.publish('POST_LIKED', {
-      postLiked: {
-        type: 'UNLIKE',
-        postId: unliked_post.postId,
-      },
-    });
-
-    return {
-      message: 'Post Unliked',
-      status: 200,
-    };
-  } catch (error) {
-    throw new GraphQLError(error);
-  }
-};
-
-export const savePostResolver = async (
-  _,
-  { postId, userId }: { userId: string; postId: string }
-) => {
-  try {
-    const post = await prisma.savedPost.create({
-      data: {
-        postId,
-        userId,
-      },
-    });
-
-    return post;
-  } catch (error) {
-    throw new GraphQLError(error);
-  }
-};
-
-export const unsavePostResolver = async (
-  _,
-  { postId, userId }: { userId: string; postId: string }
-) => {
-  try {
-    await prisma.savedPost.delete({
-      where: {
-        postId,
-        userId,
-      },
-    });
-
-    return {
-      status: 200,
-      message: 'Post Deleted',
-    };
-  } catch (error) {
     throw new GraphQLError(error);
   }
 };

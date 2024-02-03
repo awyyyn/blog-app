@@ -9,14 +9,13 @@ export const typeDefs = gql`
     getPostsWithPagination(
       offset: Int
       limit: Int
-      userId: ID
+      userId: ID!
     ): [paginationResult]
-    getLikedPostByUser(userId: ID!): [PostLikes]
-    getTotalLikesByPostId(postId: ID!): PostLikes
-    getLikedPostByPostId(postId: String): LikedPostResult
-
+    getLikedPostsByUser(userId: ID!): [Post]
+    getTotalLikesByPostId(postId: ID!): PostCountsArrayFields
+    # getLikedPostByPostId(postId: String): Count
     searchUser(query: String): searchResult
-    # savedPosts(userId: ID!, postId: ID!): Post
+    savedPostsByUser(userId: ID!): [Post]
   }
 
   type Mutation {
@@ -27,19 +26,19 @@ export const typeDefs = gql`
     #creates a comment
     createComment(commentInput: commentInput): Comment!
     #like post
-    likePost(likePostInput: likePostInput): PostLikes
+    likePost(likePostInput: likePostInput): Post
     unlikePost(userId: ID!, postId: ID!): DeleteResult
     # #like comment
     # likeComment(userId: ID!): Comment
     followUser(userId: ID!, followId: ID!): User
-    savePost(userId: ID!, postId: ID!): savedPost
+    savePost(userId: ID!, postId: ID!): [Post]
     unsavePost(userId: ID!, postId: ID!): DeleteResult
   }
 
   type Subscription {
     postCreated: Post
     commentAdded(postId: ID!): Comment!
-    postLiked(postId: ID!): postLiked
+    # postLiked(postId: ID!): postLiked
   }
 
   type LikedPostResult {
@@ -60,9 +59,11 @@ export const typeDefs = gql`
     title: String!
     createdAt: String!
     updatedAt: String!
-    _count: Count
-    liked_by: [PostLikes]
+    _count: PostCountsArrayFields
+    liked_by: [User]
     liked: Boolean
+
+    saved: Boolean
   }
 
   type searchResult {
@@ -109,12 +110,6 @@ export const typeDefs = gql`
     comment: String
   }
 
-  type PostLikes {
-    id: ID!
-    user: User
-    post: Post
-  }
-
   type User {
     id: ID
     firstname: String!
@@ -125,9 +120,11 @@ export const typeDefs = gql`
     createdAt: String!
     updatedAt: String!
 
-    liked_posts: [PostLikes]
+    liked_posts: [Post]
     comments: [Comment]
-    _count: Count
+    _count: UserCountsArrayFields
+
+    saved_posts: [Post]
 
     followedBy: [User]
     following: [User]
@@ -143,21 +140,31 @@ export const typeDefs = gql`
     updatedAt: String!
 
     comments: [Comment]
-    _count: Count
-    liked_by: [PostLikes]
+    _count: PostCountsArrayFields
+    liked_by: [User]
+
+    saved_by: [User]
   }
 
   type Comment {
     id: ID!
     comment: String!
     post: Post
-    _count: Count
+    # _count: Count
     user: User
   }
 
-  type Count {
+  type UserCountsArrayFields {
+    comments: Int
+    following: Int
+    followedBy: Int
+    Post: Int
+    save_post: Int
+  }
+
+  type PostCountsArrayFields {
     comments: Int
     liked_by: Int
-    liked_posts: Int
+    saved_by: Int
   }
 `;

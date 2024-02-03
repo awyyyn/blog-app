@@ -20,9 +20,11 @@ export const createUserResolver = async (_, { userInput }: UserInput) => {
 export const getUserResolver = async () => {
   try {
     const users = await prisma.user.findMany({
-      include: { 
+      include: {
         following: true,
         followedBy: true,
+        liked_posts: true,
+        saved_post: true,
       },
     });
     console.log(users);
@@ -33,21 +35,30 @@ export const getUserResolver = async () => {
   }
 };
 
-export const getLikedPostByUserResolver = async (
+export const getLikedPostsByUserResolver = async (
   _,
   { userId }: { userId: string }
 ) => {
   try {
-    const liked_posts = await prisma.postLikes.findMany({
+    const user = await prisma.user.findUnique({
       where: {
-        user: { id: userId },
+        id: userId,
       },
       include: {
-        post: true,
-        user: true,
+        liked_posts: true,
+        _count: {
+          select: {
+            // comments,
+            // following,
+            liked_posts: true,
+            // followedBy,
+            // Post,
+            // save_post
+          },
+        },
       },
     });
-    return liked_posts;
+    return user.liked_posts;
   } catch (error) {
     console.log(error.message);
     throw new GraphQLError(error);
@@ -90,9 +101,11 @@ export const searchUserResolver = async (_, { query }: { query: string }) => {
           },
         ],
       },
+      include: {
+        saved_post: true,
+        _count: true,
+      },
     });
-
-    console.log(result);
 
     return {
       data: result,
