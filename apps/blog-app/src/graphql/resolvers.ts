@@ -15,6 +15,7 @@ import {
   getLikedPostByPostIdResolver,
   unlikePostResolver,
   savePostResolver,
+  unsavePostResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
@@ -35,7 +36,7 @@ export const resolvers = {
     getTotalLikesByPostId: getTotalLikesByPostIdResolver,
     getLikedPostByPostId: getLikedPostByPostIdResolver,
     searchUser: searchUserResolver,
-    savePost: savePostResolver,
+    // savePost: savePostResolver,
   },
 
   Subscription: {
@@ -53,5 +54,7 @@ export const resolvers = {
     likePost: likePostResolver,
     unlikePost: unlikePostResolver,
     followUser: followUserResolver,
+    savePost: savePostResolver,
+    unsavePost: unsavePostResolver,
   },
 };

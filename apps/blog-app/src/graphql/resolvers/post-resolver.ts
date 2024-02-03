@@ -75,7 +75,17 @@ export const getPostsWithPaginationResolver = async (
           },
         },
         author: true,
+
         _count: true,
+      },
+      where: {
+        author: {
+          followedBy: {
+            some: {
+              id: userId,
+            },
+          },
+        },
       },
     });
 
@@ -99,7 +109,6 @@ export const likePostResolver = async (
 ) => {
   try {
     // const post = await prisma.user.update({});
-    console.log(likePostInput);
     const like_post = await prisma.postLikes.create({
       data: {
         user: {
@@ -198,7 +207,8 @@ export const unlikePostResolver = async (
     });
 
     return {
-      success: true,
+      message: 'Post Unliked',
+      status: 200,
     };
   } catch (error) {
     throw new GraphQLError(error);
@@ -218,6 +228,27 @@ export const savePostResolver = async (
     });
 
     return post;
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};
+
+export const unsavePostResolver = async (
+  _,
+  { postId, userId }: { userId: string; postId: string }
+) => {
+  try {
+    await prisma.savedPost.delete({
+      where: {
+        postId,
+        userId,
+      },
+    });
+
+    return {
+      status: 200,
+      message: 'Post Deleted',
+    };
   } catch (error) {
     throw new GraphQLError(error);
   }

@@ -16,7 +16,30 @@ export const typeDefs = gql`
     getLikedPostByPostId(postId: String): LikedPostResult
 
     searchUser(query: String): searchResult
+    # savedPosts(userId: ID!, postId: ID!): Post
+  }
+
+  type Mutation {
+    #creates a user
+    createUser(userInput: userInput): User!
+    #creates a post
+    createPost(postInput: postInput): Post!
+    #creates a comment
+    createComment(commentInput: commentInput): Comment!
+    #like post
+    likePost(likePostInput: likePostInput): PostLikes
+    unlikePost(userId: ID!, postId: ID!): DeleteResult
+    # #like comment
+    # likeComment(userId: ID!): Comment
+    followUser(userId: ID!, followId: ID!): User
     savePost(userId: ID!, postId: ID!): savedPost
+    unsavePost(userId: ID!, postId: ID!): DeleteResult
+  }
+
+  type Subscription {
+    postCreated: Post
+    commentAdded(postId: ID!): Comment!
+    postLiked(postId: ID!): postLiked
   }
 
   type LikedPostResult {
@@ -47,34 +70,14 @@ export const typeDefs = gql`
     count: Int
   }
 
-  type Mutation {
-    #creates a user
-    createUser(userInput: userInput): User!
-    #creates a post
-    createPost(postInput: postInput): Post!
-    #creates a comment
-    createComment(commentInput: commentInput): Comment!
-    #like post
-    likePost(likePostInput: likePostInput): PostLikes
-    unlikePost(userId: ID!, postId: ID!): DeleteResult
-    # #like comment
-    # likeComment(userId: ID!): Comment
-    followUser(userId: ID!, followId: ID!): User
-  }
-
   type DeleteResult {
-    success: Boolean
+    status: Int
+    message: String
   }
 
   input likePostInput {
     userId: ID!
     postId: ID!
-  }
-
-  type Subscription {
-    postCreated: Post
-    commentAdded(postId: ID!): Comment!
-    postLiked(postId: ID!): postLiked
   }
 
   type postLiked {
