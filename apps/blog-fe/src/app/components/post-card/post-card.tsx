@@ -7,10 +7,16 @@ import {
   CardFooter,
   Avatar,
   Button,
+  Tooltip,
 } from '@nextui-org/react';
 import { useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
+import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+import { SAVE_POST, UNSAVE_POST } from '../../queries/queries';
+import { useMutation } from '@apollo/client';
+import { userStore } from '../../store/userStore';
+// import { useMutation } from '@apollo/client';
 
 /* eslint-disable-next-line */
 
@@ -29,11 +35,50 @@ export function PostCard({
   author,
   handleLike,
   liked,
+  saved,
 }: PostCardProps) {
-  const [isFollowed, setIsFollowed] = useState(false);
+  const { user } = userStore();
+  const [isSaved, setIsSaved] = useState(saved);
   const navigate = useNavigate();
+  const [save_post] = useMutation(SAVE_POST, {
+    variables: {
+      userId: user.id,
+      postId: id,
+    },
+  });
+  const [unsave_post] = useMutation(UNSAVE_POST, {
+    variables: {
+      userId: user.id,
+      postId: id,
+    },
+  });
 
   const handleNavigate = () => navigate(`/post/${id}`);
+  const handleSave = () => {
+    if (isSaved) {
+      unsave_post()
+        .then((data) => {
+          // post saved
+          console.log(data);
+          setIsSaved(false);
+        })
+        .catch((err) => {
+          // saving post error
+          console.log(err);
+        });
+    } else {
+      save_post()
+        .then((data) => {
+          // post saved
+          setIsSaved(true);
+          console.log(data);
+        })
+        .catch((err) => {
+          // saving post error
+          console.log(err);
+        });
+    }
+  };
 
   return (
     <Card
@@ -43,7 +88,7 @@ export function PostCard({
       shadow="sm"
       radius="sm"
     >
-      <CardHeader className="justify-between">
+      <CardHeader className="justify-between relative">
         <div className="flex gap-5">
           <Avatar
             isBordered
@@ -60,20 +105,27 @@ export function PostCard({
             </h5>
           </div>
         </div>
-        <Button
-          className={
-            isFollowed
-              ? 'bg-transparent text-foreground border-default-200'
-              : ''
-          }
-          color="primary"
-          radius="full"
-          size="sm"
-          variant={isFollowed ? 'bordered' : 'solid'}
-          onPress={() => setIsFollowed(!isFollowed)}
+
+        <Tooltip
+          color="secondary"
+          placement="bottom-end"
+          content={isSaved ? 'Unsave post?' : 'Save post?'}
+          offset={1}
         >
-          {isFollowed ? 'Unfollow' : 'Follow'}
-        </Button>
+          <Button
+            className="absolute  -top-2 p-1 hover:bg-none -right-1 m-0  "
+            isIconOnly
+            size="md"
+            variant="light"
+            onPress={handleSave}
+          >
+            {isSaved ? (
+              <IoBookmark className="h-9 fill-purple-600 w-9" />
+            ) : (
+              <IoBookmarkOutline className="h-9 stroke-purple-600 w-9" />
+            )}
+          </Button>
+        </Tooltip>
       </CardHeader>
       <CardBody className="px-3 py-0 text-small text-default-400">
         <h1 className="font-bold">{title}</h1>

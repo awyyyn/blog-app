@@ -35,7 +35,7 @@ const Layout = () => {
       <aside className="hidden md:block h-screen fixed md:w-[200px] lg:w-[250px]  border-r">
         <Aside />
       </aside>
-      <main className="py-20 ml-0  md:ml-[200px] lg:ml-[250px] px-10">
+      <main className="py-20 ml-0  md:ml-[200px] lg:ml-[250px] sm:px-10">
         <CreatePostModal />
         <Outlet />
       </main>

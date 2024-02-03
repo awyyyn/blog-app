@@ -10,7 +10,7 @@ import { PaginationResult } from '@blog-app/shared';
 import { userStore } from '../../store/userStore';
 const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
-export function Home() {
+export function Saved() {
   const { user } = userStore();
   console.log(user, 'usersds');
   const { fetchMore, data, loading } = useQuery(GET_POSTS_WITH_PAGINATION, {
@@ -88,4 +88,4 @@ export function Home() {
   );
 }
 
-export default Home;
+export default Saved;

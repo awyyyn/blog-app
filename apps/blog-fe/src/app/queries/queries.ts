@@ -20,7 +20,7 @@ import gql from 'graphql-tag';
 `; */
 
 export const GET_POSTS_WITH_PAGINATION = gql`
-  query GetPostsWithPagination($offset: Int, $limit: Int, $userId: ID) {
+  query GetPostsWithPagination($offset: Int, $limit: Int, $userId: ID!) {
     getPostsWithPagination(offset: $offset, limit: $limit, userId: $userId) {
       _count {
         liked_by
@@ -31,6 +31,7 @@ export const GET_POSTS_WITH_PAGINATION = gql`
       description
       updatedAt
       createdAt
+      saved
       title
       author {
         profile
@@ -153,6 +154,23 @@ export const CREATE_POST = gql`
     createPost(postInput: $postInput) {
       id
       description
+    }
+  }
+`;
+
+export const SAVE_POST = gql`
+  mutation SavePost($postId: ID!, $userId: ID!) {
+    savePost(postId: $postId, userId: $userId) {
+      id
+    }
+  }
+`;
+
+export const UNSAVE_POST = gql`
+  mutation UnsavePost($userId: ID!, $postId: ID!) {
+    unsavePost(userId: $userId, postId: $postId) {
+      message
+      status
     }
   }
 `;
