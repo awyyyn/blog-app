@@ -1,7 +1,7 @@
 import styles from './post.module.css';
 import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
-import UserAvatar from '../../components/user-avatar/user-avatar';
+// import UserAvatar from '../../components/user-avatar/user-avatar';
 import { Button, Divider, Input, Spinner, User } from '@nextui-org/react';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { VscSend } from 'react-icons/vsc';
@@ -24,71 +24,56 @@ export function Post() {
   const { user } = userStore();
 
   const params = useParams();
-  const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState('');
+  const postInput = {
+    userId: user.id,
+    postId: params.id,
+  };
   const [comments, setComments] = useState<CommentType[]>([]);
-  const [commentsCount, setCommentsCount] = useState(0);
-  const [likes, setLikes] = useState(0);
   const [add_comment, { loading: adding_comment }] = useMutation(ADD_COMMENT);
-
-  /* SUBSCRIBE COMMENT */
-  useSubscription(SUBSCRIBE_COMMENT, {
-    variables: { postid: params.id },
-    onData(options) {
-      if (options.data.error) return console.log(options);
-      setComments((prevComment) => [
-        options.data.data.commentAdded,
-        ...prevComment,
-      ]);
-      setCommentsCount((count) => count + 1);
-    },
+  const [like_post] = useMutation(LIKE_POST, {
+    variables: { likePostInput: postInput },
   });
-
-  /* SUBSCRIBE LIKE/UNLIKE POST */
-  useSubscription(SUBSCRIBE_POST_LIKE, {
-    variables: { postId: params.id },
-    onData(options) {
-      if (options.data.error) return console.log(options);
-      if (options.data.data.postLiked.type === 'LIKE') {
-        setLikes((likes) => likes + 1);
-      } else {
-        setLikes((likes) => likes - 1);
-      }
-    },
+  const [unlike_post] = useMutation(UNLIKE_POST, {
+    variables: postInput,
   });
-
-  /* GET COMMENTS */
-  const {
-    fetchMore,
-    data: comments_data,
-    loading: loading_comments,
-    refetch: refetch_comments,
-  } = useQuery(GET_COMMENTS, {
-    variables: { postId: params.id, offset: 0 },
-    onError(error) {
-      console.group(error);
-    },
-  });
-
-  /* GET POST */
   const {
     data,
     loading,
+    error,
     refetch: refetch_post,
   } = useQuery(GET_POST, {
-    variables: {
-      id: params.id,
-    },
+    variables: postInput,
     onCompleted(data) {
-      setLiked(data.getLikedPostByPostId.exists);
-      setLikes(data.getPostById._count.liked_by);
-      setCommentsCount(data.getPostById._count.comments);
+      setCount({
+        likes: data?.getPostById._count.liked_by,
+        comments: data?.getPostById._count.comments,
+      });
+      setLiked(data?.getPostById.liked);
     },
   });
+  const [count, setCount] = useState({
+    likes: data?.getPostById._count.liked_by,
+    comments: data?.getPostById._count.comments,
+  });
+  const {
+    data: comments_data,
+    loading: comments_loading,
+    error: comments_error,
+    refetch: refetch_comments,
+    fetchMore: fetchMore_comments,
+  } = useQuery(GET_COMMENTS, {
+    variables: {
+      postId: params.id,
+      offset: 0,
+    },
+  });
+  const [liked, setLiked] = useState(false);
 
-  /* LIKE MUTATION */
-  const [like_post] = useMutation(LIKE_POST);
-  const [unlike_post] = useMutation(UNLIKE_POST);
+  useEffect(() => {
+    refetch_post();
+    refetch_comments();
+  }, [params]);
 
   useEffect(() => {
     if (comments_data) {
@@ -96,72 +81,95 @@ export function Post() {
     }
   }, [comments_data]);
 
-  useEffect(() => {
-    refetch_post();
-    refetch_comments();
-  }, [params]);
+  /* SUBSCRIBE COMMENT */
+  useSubscription(SUBSCRIBE_COMMENT, {
+    variables: { postId: params.id },
+    onData(options) {
+      if (options.data?.error) return console.log(options);
+      setCount((count) => ({
+        ...count,
+        comments: count.comments + 1,
+      }));
+      setComments((prevComments) => [
+        options.data?.data?.commentAdded,
+        ...prevComments,
+      ]);
+    },
+  });
 
+  /* SUBSCRIBE LIKE/UNLIKE POST */
+  useSubscription(SUBSCRIBE_POST_LIKE, {
+    variables: { postId: params.id },
+    onData(options) {
+      if (options.data?.error) return console.log(options);
+      if (options.data?.data?.postLiked.type === 'LIKE') {
+        setCount((count) => ({
+          ...count,
+          likes: count.likes + 1,
+        }));
+      } else {
+        setCount((count) => ({
+          ...count,
+          likes: count.likes - 1,
+        }));
+      }
+    },
+  });
+
+  const handleAddComment = () => {
+    add_comment({
+      variables: {
+        commentInput: {
+          comment: comment,
+          postId: params.id,
+          userId: user.id,
+        },
+      },
+    }).then(() => {
+      setComment('');
+    });
+  };
+  const handleLikePost = () => {
+    if (liked) {
+      setLiked(false);
+      unlike_post().catch((err) => {
+        setLiked(true);
+      });
+    } else {
+      setLiked(true);
+      like_post().catch((err) => {
+        setLiked(false);
+      });
+    }
+  };
   const handleFetchMore = () => {
-    fetchMore({
+    fetchMore_comments({
       variables: {
         offset: comments.length,
       },
     });
-  };
-
-  const handleAddComment = async () => {
-    if (!comment) return;
-    await add_comment({
-      variables: {
-        commentInput: {
-          userId: user.id,
-          postId: params.id,
-          comment: comment,
-        },
-      },
-    });
-    setComment('');
-  };
-
-  const handleLikePost = () => {
-    if (!liked) {
-      like_post({
-        variables: {
-          likePostInput: {
-            userId: user.id,
-            postId: params.id,
-          },
-        },
-      });
-      setLiked(true);
-    } else {
-      unlike_post({
-        variables: {
-          userId: user.id,
-          postId: params.id,
-        },
-      });
-      setLiked(false);
-    }
+    console.log(comments_data, 'r');
   };
 
   if (loading) return <Spinner />;
+  if (error || comments_error) return <p>Error: {error?.message}</p>;
 
+  console.log(comments_data, 'e');
   return (
     <div className={styles['container']}>
       <div className="flex gap-x-3">
         <User
-          name={`${data.getPostById.author.firstname} ${data.getPostById.author.lastname}`}
-          description={data.getPostById.author.username}
+          name={`${data?.getPostById.author.firstname} ${data?.getPostById.author.lastname}`}
+          description={data?.getPostById.author.username}
           avatarProps={{
-            src: data.getPostById.author.profile,
+            src: data?.getPostById.author.profile,
           }}
         />
       </div>
       <Divider className="my-4 bg-stone-100" />
       <div>
-        <h1 className="font-bold text-xl">{data.getPostById.title}</h1>
-        <p>{data.getPostById.description}</p>
+        <h1 className="font-bold text-xl">{data?.getPostById.title}</h1>
+        <p>{data?.getPostById.description}</p>
       </div>
       <div className="flex gap-x-3 mt-2">
         <div className="flex items-center">
@@ -191,11 +199,11 @@ export function Post() {
               />
             )}
           </Button>
-          <p className="font-semibold text-default-400  ">{likes}</p>
+          <p className="font-semibold text-default-400  ">{count.likes}</p>
           <p className="ml-2 text-default-400 ">Likes</p>
         </div>
         <div className="flex items-center">
-          <p className="font-semibold text-default-400  ">{commentsCount}</p>
+          <p className="font-semibold text-default-400  ">{count.comments}</p>
           <p className="ml-2 text-default-400  ">Comments</p>
         </div>
       </div>
@@ -228,14 +236,14 @@ export function Post() {
           }
         />
       </div>
-      {loading_comments ? (
+      {comments_loading ? (
         <CommentsSpinner />
       ) : (
         <Suspense fallback={<CommentsSpinner />}>
           <Comments profile={user.profile as string} comments={comments} />
         </Suspense>
       )}
-      {data.getPostById._count.comments !==
+      {data?.getPostById._count.comments !==
         comments_data?.getCommentsByPostId.length &&
         comments_data?.getCommentsByPostId.length >= 10 && (
           <Button
@@ -243,7 +251,7 @@ export function Post() {
             fullWidth
             variant="light"
             onClick={handleFetchMore}
-            isLoading={loading_comments}
+            isLoading={comments_loading}
           >
             See more comments
           </Button>

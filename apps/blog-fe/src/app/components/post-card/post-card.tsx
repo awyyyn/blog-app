@@ -56,25 +56,27 @@ export function PostCard({
   const handleNavigate = () => navigate(`/post/${id}`);
   const handleSave = () => {
     if (isSaved) {
+      setIsSaved(false);
       unsave_post()
         .then((data) => {
           // post saved
           console.log(data);
-          setIsSaved(false);
         })
         .catch((err) => {
           // saving post error
+          setIsSaved(true);
           console.log(err);
         });
     } else {
+      setIsSaved(true);
       save_post()
         .then((data) => {
           // post saved
-          setIsSaved(true);
           console.log(data);
         })
         .catch((err) => {
           // saving post error
+          setIsSaved(false);
           console.log(err);
         });
     }

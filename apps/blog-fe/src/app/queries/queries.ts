@@ -1,24 +1,5 @@
 import gql from 'graphql-tag';
 
-/* export const GET_POSTS = gql`
-  query GetPostsWithPagination( ) {
-    getPosts {
-      id
-      description
-      likes
-      createdAt
-      updatedAt
-      title
-      author {
-        id
-        username
-        firstname
-        lastname
-      }
-    }
-  }
-`; */
-
 export const GET_POSTS_WITH_PAGINATION = gql`
   query GetPostsWithPagination($offset: Int, $limit: Int, $userId: ID!) {
     getPostsWithPagination(offset: $offset, limit: $limit, userId: $userId) {
@@ -43,20 +24,6 @@ export const GET_POSTS_WITH_PAGINATION = gql`
   }
 `;
 
-export const GET_COMMENTS = gql`
-  query GetCommentsByPostId($postId: String, $offset: Int) {
-    getCommentsByPostId(postId: $postId, offset: $offset) {
-      id
-      comment
-      user {
-        firstname
-        lastname
-        profile
-      }
-    }
-  }
-`;
-
 export const ADD_COMMENT = gql`
   mutation CreateComment($commentInput: commentInput) {
     createComment(commentInput: $commentInput) {
@@ -71,39 +38,62 @@ export const ADD_COMMENT = gql`
 `;
 
 export const GET_POST = gql`
-  query GetPostById($id: String!) {
-    getPostById(id: $id) {
-      id
-      description
-      title
+  query GetPostById($postId: ID!, $userId: ID) {
+    getPostById(id: $postId, userId: $userId) {
       author {
-        username
         firstname
-        profile
         lastname
+        username
+        profile
       }
+      createdAt
+      title
+      id
+      liked
+      description
       _count {
         comments
         liked_by
       }
-      createdAt
-      updatedAt
     }
-    getLikedPostByPostId(postId: $id) {
-      exists
-      liked_post_id
+  }
+  # query GetComments($postId: ID!, $offset: Int) {
+  #   getCommentsByPostId(postId: $postId, offset: $offset) {
+  #     comment
+  #     user
+  #     author {
+  #       firstname
+  #       lastname
+  #       username
+  #     }
+  #   }
+  # }
+`;
+
+export const GET_COMMENTS = gql`
+  query GetCommentsByPostId($postId: ID!, $offset: Int) {
+    getCommentsByPostId(postId: $postId, offset: $offset) {
+      comment
+      user {
+        firstname
+        lastname
+        username
+      }
+      id
     }
   }
 `;
 
 export const SUBSCRIBE_COMMENT = gql`
-  subscription CommentAdded($postid: ID!) {
-    commentAdded(postId: $postid) {
+  subscription Subscription($postId: ID!) {
+    commentAdded(postId: $postId) {
       id
       comment
       user {
         firstname
         lastname
+        username
+        profile
       }
     }
   }
@@ -120,7 +110,8 @@ export const LIKE_POST = gql`
 export const UNLIKE_POST = gql`
   mutation UnlikePost($postId: ID!, $userId: ID!) {
     unlikePost(userId: $userId, postId: $postId) {
-      success
+      status
+      message
     }
   }
 `;

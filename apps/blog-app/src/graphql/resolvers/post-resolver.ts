@@ -45,7 +45,10 @@ export const createPostResolver = async (
   }
 };
 
-export const getPostByIdResolver = async (_, { id }: { id: string }) => {
+export const getPostByIdResolver = async (
+  _,
+  { id, userId }: { id: string; userId: string }
+) => {
   try {
     const post = await prisma.post.findFirst({
       where: { id },
@@ -56,7 +59,12 @@ export const getPostByIdResolver = async (_, { id }: { id: string }) => {
         liked_by: true,
       },
     });
-    return post;
+    const liked = post.liked_by_ids.includes(userId);
+    console.log(userId, liked);
+    return {
+      ...post,
+      liked,
+    };
   } catch (error) {
     throw new GraphQLError(error);
   }

@@ -4,13 +4,9 @@ export const typeDefs = gql`
   type Query {
     getUsers: [User]
     getPosts: [Post]
-    getCommentsByPostId(postId: String, offset: Int): [Comment]
-    getPostById(id: String): Post
-    getPostsWithPagination(
-      offset: Int
-      limit: Int
-      userId: ID!
-    ): [paginationResult]
+    getCommentsByPostId(postId: ID!, offset: Int): [Comment]
+    getPostById(id: ID!, userId: ID): PostResult
+    getPostsWithPagination(offset: Int, limit: Int, userId: ID!): [PostResult]
     getLikedPostsByUser(userId: ID!): [Post]
     getTotalLikesByPostId(postId: ID!): PostCountsArrayFields
     # getLikedPostByPostId(postId: String): Count
@@ -38,7 +34,7 @@ export const typeDefs = gql`
   type Subscription {
     postCreated: Post
     commentAdded(postId: ID!): Comment!
-    # postLiked(postId: ID!): postLiked
+    postLiked(postId: ID!): postLiked
   }
 
   type LikedPostResult {
@@ -52,7 +48,7 @@ export const typeDefs = gql`
     post: Post
   }
 
-  type paginationResult {
+  type PostResult {
     id: ID!
     description: String
     author: User

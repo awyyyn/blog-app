@@ -6,7 +6,7 @@ import { Navbar, NavbarBrand, NavbarContent, Link } from '@nextui-org/react';
 import { Link as RouterLink } from 'react-router-dom';
 import SignInButton from '../sign-in-button/sign-in-button';
 import UserNavBarContent from './user-navbar-content';
-import { userStore } from '../../store/userStore';
+// import { userStore } from '../../store/userStore';
 export interface HeaderProps {}
 
 /* eslint-disable-next-line */
@@ -23,7 +23,12 @@ export function Header(props: HeaderProps) {
   return (
     <Navbar className="top-0 fixed" isBordered isBlurred>
       <NavbarBrand>
-        <Link href={'/'} as={RouterLink} className="font-bold text-inherit">
+        <Link
+          href={'/'}
+          reloadDocument
+          as={RouterLink}
+          className="font-bold text-inherit"
+        >
           Bloog
         </Link>
       </NavbarBrand>

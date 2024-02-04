@@ -28,6 +28,7 @@ import {
   likePostResolver,
   unlikePostResolver,
 } from './resolvers/liking-post-resolver';
+import { postSubscriptionResolver } from './resolvers/post-subscription-resolver';
 
 export const resolvers = {
   Query: {
@@ -48,7 +49,7 @@ export const resolvers = {
       subscribe: () => pubsub.asyncIterator(['POST_CREATED']),
     },
     commentAdded: commentSubscriptionResolver,
-    // postLiked: postSubscriptionResolver,
+    postLiked: postSubscriptionResolver,
   },
 
   Mutation: {

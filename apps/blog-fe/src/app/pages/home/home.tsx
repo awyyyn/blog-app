@@ -19,9 +19,10 @@ export function Home() {
       offset: 0,
       userId: user.id,
     },
-    pollInterval: 30000,
+    pollInterval: 300000,
   });
   console.log(data, 'sd');
+
   /* LIKE MUTATION */
   const [like_post] = useMutation(LIKE_POST, {
     refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],

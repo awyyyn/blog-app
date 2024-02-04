@@ -39,13 +39,13 @@ const Aside = () => {
       {/* <Link href="/" as={RouterLink}>
         Home
       </Link> */}
-      {links.map(({ path, label, Icon, button, event }) => {
+      {links.map(({ path, label, Icon, button, event }, indx) => {
         return button ? (
           <Button
             onClick={event}
             fullWidth
             className="justify-start gap-x-4"
-            key={path}
+            key={indx}
             variant="light"
             startContent={Icon}
           >
@@ -53,11 +53,12 @@ const Aside = () => {
           </Button>
         ) : (
           <Button
-            key={path}
+            key={indx}
             startContent={Icon}
             variant="light"
             to={path}
             fullWidth
+            reloadDocument={path === '/' ? true : false}
             className="justify-start gap-x-4"
             as={RouterLink}
           >
