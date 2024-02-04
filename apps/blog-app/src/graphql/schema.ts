@@ -11,7 +11,7 @@ export const typeDefs = gql`
     getTotalLikesByPostId(postId: ID!): PostCountsArrayFields
     # getLikedPostByPostId(postId: String): Count
     searchUser(query: String): searchResult
-    savedPostsByUser(userId: ID!): [Post]
+    savedPostsByUser(userId: ID!): [PostResult]
   }
 
   type Mutation {

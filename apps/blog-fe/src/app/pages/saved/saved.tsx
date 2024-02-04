@@ -1,19 +1,23 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
 import {
   GET_POSTS_WITH_PAGINATION,
   LIKE_POST,
+  SAVED_POST,
   UNLIKE_POST,
+  UNSAVE_POST,
 } from '../../queries/queries';
-import { PaginationResult } from '@blog-app/shared';
+import { PostResult } from '@blog-app/shared';
 import { userStore } from '../../store/userStore';
-const PostCard = lazy(() => import('../../components/post-card/post-card'));
+const SavedPostCard = lazy(
+  () => import('../../components/saved-post-card/saved-post-card')
+);
 
 export function Saved() {
   const { user } = userStore();
-  console.log(user, 'usersds');
-  const { fetchMore, data, loading } = useQuery(GET_POSTS_WITH_PAGINATION, {
+  const [saved, setSaved] = useState<PostResult[]>();
+  const { /* fetchMore, */ data, loading } = useQuery(SAVED_POST, {
     variables: {
       limit: 20,
       offset: 0,
@@ -21,7 +25,13 @@ export function Saved() {
     },
     pollInterval: 30000,
   });
-  console.log(data, 'sd');
+
+  useEffect(() => {
+    if (data) {
+      setSaved(data.savedPostsByUser);
+    }
+  }, [data]);
+
   /* LIKE MUTATION */
   const [like_post] = useMutation(LIKE_POST, {
     refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],
@@ -29,6 +39,7 @@ export function Saved() {
   const [unlike_post] = useMutation(UNLIKE_POST, {
     refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],
   });
+  const [unsave] = useMutation(UNSAVE_POST);
 
   if (loading) {
     return <PostCardSpinner />;
@@ -54,12 +65,24 @@ export function Saved() {
     });
   };
 
+  const handleUnsavePost = (postId: string) => {
+    unsave({
+      variables: {
+        postId,
+        userId: user.id,
+      },
+    }).then(() => {
+      setSaved(saved?.filter((post) => post.id !== postId));
+    });
+  };
+
   return (
     <div className="flex items-center flex-col flex-wrap gap-5 md:max-w-min">
-      {data &&
-        data.getPostsWithPagination.map((post: PaginationResult) => (
+      {saved &&
+        saved.map((post: PostResult) => (
           <Suspense key={post.id} fallback={<PostCardSpinner />}>
-            <PostCard
+            <SavedPostCard
+              handleUnsave={() => handleUnsavePost(post.id)}
               handleLike={() => {
                 if (post.liked) {
                   handleUnlike(post.id);
@@ -71,19 +94,6 @@ export function Saved() {
             />
           </Suspense>
         ))}
-      {data.getPostsWithPagination.length >= 20 && (
-        <button
-          onClick={() => {
-            fetchMore({
-              variables: {
-                offset: data.getPostsWithPagination.length,
-              },
-            });
-          }}
-        >
-          Fetch More
-        </button>
-      )}
     </div>
   );
 }

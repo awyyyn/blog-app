@@ -62,14 +62,29 @@ export const savedPostsByUser = async (_, { userId }: { userId: string }) => {
   try {
     const data = await prisma.user.findUnique({
       include: {
-        saved_post: true,
+        saved_post: {
+          include: {
+            author: true,
+            _count: true,
+            liked_by: true,
+          },
+        },
+        // _count: true,
       },
       where: {
         id: userId,
       },
     });
-    console.log(data, 'asd');
-    return data.saved_post;
+
+    const results = data.saved_post.map((post) => {
+      const liked = post.liked_by_ids.includes(userId);
+      return {
+        ...post,
+        liked,
+      };
+    });
+
+    return results;
   } catch (error) {
     throw new GraphQLError(error);
   }

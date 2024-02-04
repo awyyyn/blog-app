@@ -15,6 +15,7 @@ import Callback from './pages/callback/callback';
 import Post from './pages/post/post';
 import Layout from './layout';
 import AuthGuard from './components/auth-guard/auth-guard';
+import Saved from './pages/saved/saved';
 
 export function App() {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN ?? '';
@@ -30,6 +31,7 @@ export function App() {
         }
       >
         <Route path="/" element={<Home />} />,
+        <Route path="/saved-posts" element={<Saved />} />,
         <Route path="/post/:id" element={<Post />} />,
       </Route>,
       <Route path="/callback" element={<Callback />} />,

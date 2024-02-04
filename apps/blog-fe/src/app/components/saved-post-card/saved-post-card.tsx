@@ -1,5 +1,7 @@
-// import styles from './post-card.module.css';
-import { PostResult } from '@blog-app/shared';
+import React from 'react';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
+import { IoBookmark } from 'react-icons/io5';
 import {
   Card,
   CardHeader,
@@ -9,78 +11,27 @@ import {
   Button,
   Tooltip,
 } from '@nextui-org/react';
-import { useState } from 'react';
-import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
-import { SAVE_POST, UNSAVE_POST } from '../../queries/queries';
-import { useMutation } from '@apollo/client';
-import { userStore } from '../../store/userStore';
-// import { useMutation } from '@apollo/client';
+import { PostResult } from '@blog-app/shared';
 
-/* eslint-disable-next-line */
-
-interface PostCardProps extends PostResult {
+interface SavedPostCardProps extends PostResult {
   handleLike: (/* userId: string, postId: string */) => void;
-  // handleUnLike: (userId: string, postId: string) => void;
+  handleUnsave: () => void;
 }
 
-export function PostCard({
-  createdAt,
-  id,
-  title,
-  updatedAt,
-  _count,
-  description,
-  author,
-  handleLike,
-  liked,
-  saved,
-}: PostCardProps) {
-  const { user } = userStore();
-  const [isSaved, setIsSaved] = useState(saved);
+const SavedPostCard = (props: SavedPostCardProps) => {
+  const {
+    id,
+    liked,
+    handleLike,
+    handleUnsave,
+    title,
+    description,
+    _count,
+    author,
+  } = props;
   const navigate = useNavigate();
-  const [save_post] = useMutation(SAVE_POST, {
-    variables: {
-      userId: user.id,
-      postId: id,
-    },
-  });
-  const [unsave_post] = useMutation(UNSAVE_POST, {
-    variables: {
-      userId: user.id,
-      postId: id,
-    },
-  });
 
   const handleNavigate = () => navigate(`/post/${id}`);
-  const handleSave = () => {
-    if (isSaved) {
-      setIsSaved(false);
-      unsave_post()
-        .then((data) => {
-          // post saved
-          console.log(data);
-        })
-        .catch((err) => {
-          // saving post error
-          setIsSaved(true);
-          console.log(err);
-        });
-    } else {
-      setIsSaved(true);
-      save_post()
-        .then((data) => {
-          // post saved
-          console.log(data);
-        })
-        .catch((err) => {
-          // saving post error
-          setIsSaved(false);
-          console.log(err);
-        });
-    }
-  };
 
   return (
     <Card
@@ -111,7 +62,7 @@ export function PostCard({
         <Tooltip
           color="secondary"
           placement="bottom-end"
-          content={isSaved ? 'Unsave post?' : 'Save post?'}
+          content={'Unsave post?'}
           offset={1}
         >
           <Button
@@ -119,13 +70,9 @@ export function PostCard({
             isIconOnly
             size="md"
             variant="light"
-            onPress={handleSave}
+            onPress={handleUnsave}
           >
-            {isSaved ? (
-              <IoBookmark className="h-9 fill-purple-600 w-9" />
-            ) : (
-              <IoBookmarkOutline className="h-9 stroke-purple-600 w-9" />
-            )}
+            <IoBookmark className="h-9 fill-purple-600 w-9" />
           </Button>
         </Tooltip>
       </CardHeader>
@@ -175,6 +122,6 @@ export function PostCard({
       </CardFooter>
     </Card>
   );
-}
+};
 
-export default PostCard;
+export default SavedPostCard;

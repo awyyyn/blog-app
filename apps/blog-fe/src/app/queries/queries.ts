@@ -160,8 +160,30 @@ export const SAVE_POST = gql`
 export const UNSAVE_POST = gql`
   mutation UnsavePost($userId: ID!, $postId: ID!) {
     unsavePost(userId: $userId, postId: $postId) {
-      message
       status
+      message
+    }
+  }
+`;
+
+export const SAVED_POST = gql`
+  query SavedPostsByUser($userId: ID!) {
+    savedPostsByUser(userId: $userId) {
+      description
+      title
+      id
+      _count {
+        comments
+        liked_by
+      }
+      author {
+        username
+        profile
+        firstname
+        lastname
+      }
+      createdAt
+      liked
     }
   }
 `;

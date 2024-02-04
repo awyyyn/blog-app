@@ -6,8 +6,8 @@ import {
   LIKE_POST,
   UNLIKE_POST,
 } from '../../queries/queries';
-import { PaginationResult } from '@blog-app/shared';
 import { userStore } from '../../store/userStore';
+import { PostResult } from '@blog-app/shared';
 const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
 export function Home() {
@@ -58,7 +58,7 @@ export function Home() {
   return (
     <div className="flex items-center flex-col flex-wrap gap-5 md:max-w-min">
       {data &&
-        data.getPostsWithPagination.map((post: PaginationResult) => (
+        data.getPostsWithPagination.map((post: PostResult) => (
           <Suspense key={post.id} fallback={<PostCardSpinner />}>
             <PostCard
               handleLike={() => {
