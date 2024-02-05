@@ -36,6 +36,10 @@ model User {
 
   liked_posts_ids String[] @db.ObjectId
   liked_posts Post[] @relation(name: "LikedPosts", fields: [liked_posts_ids], references: [id])
+
+  notification Notification[] @relation(name: "Recipent")
+  
+
 }
 
   
@@ -60,6 +64,8 @@ model Post {
   liked_by_ids String[] @db.ObjectId
   liked_by User[] @relation(name: "LikedPosts", fields: [liked_by_ids], references: [id])
    
+  
+  notification Notification[] @relation(name: "PostNotification")
 }
 
 
@@ -71,5 +77,23 @@ model Comment {
   post      Post     @relation(fields: [postId], references: [id])
   userId    String   @db.ObjectId
   user      User     @relation(name: "UserComment", fields: [userId], references: [id] )
+  createdAt DateTime @default(now()) 
+}
+
+enum NotificationType {
+  POST
+  COMMENT
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  recipent_id String @db.ObjectId 
+  recipent User @relation(name: "Recipent", fields: [recipent_id], references: [id])
+  
+  post_id String @db.ObjectId 
+  post Post @relation(name: "PostNotification", fields: [post_id], references: [id])
+  
+  isRead Boolean @default(false)
+  type NotificationType
   createdAt DateTime @default(now()) 
 }
