@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   Modal,
   ModalContent,
@@ -15,39 +15,35 @@ import { CREATE_POST } from '../../queries/queries';
 import { userStore } from '../../store/userStore';
 import { useNavigate } from 'react-router-dom';
 
+type Input = {
+  title: string;
+  description: string;
+};
+
 const CreatePostModal = () => {
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Input>();
   const { modal, setModal } = useCreatePostStore();
   const { user } = userStore();
-  const [blog, setBlog] = useState({
-    title: '',
-    description: '',
-  });
   const [createPost, { loading, error }] = useMutation(CREATE_POST);
+  // const []
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setBlog((blog) => ({
-      ...blog,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
-  const handleCreatePost = async (close: () => void) => {
+  const onSubmit: SubmitHandler<Input> = async (values) => {
     createPost({
       variables: {
         postInput: {
-          description: blog.description,
-          title: blog.title,
+          description: values.description,
+          title: values.title,
           userId: user.id,
         },
       },
     }).then((data) => {
-      close();
-      setBlog({
-        description: '',
-        title: '',
-      });
-      console.log(data, 'data');
+      reset();
       navigate(`/post/${data.data.createPost.id}`);
     });
   };
@@ -57,26 +53,25 @@ const CreatePostModal = () => {
     <Modal isOpen={modal.isOpen} placement="top-center" onOpenChange={setModal}>
       <ModalContent>
         {(onClose) => (
-          <>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <ModalHeader className="flex flex-col gap-1">
               Modal Title
             </ModalHeader>
             <ModalBody>
               <Input
-                value={blog.title}
+                {...register('title', { required: true })}
                 name="title"
-                onChange={handleChange}
                 type="text"
                 disabled={loading}
                 label="Title"
                 labelPlacement="outside"
                 placeholder="Blog title"
+                errorMessage={errors.title && 'Content is required!'}
               />
               <Textarea
-                value={blog.description}
-                name="description"
-                onChange={handleChange}
+                {...register('description', { required: true })}
                 type="text"
+                errorMessage={errors.description && 'Content is required!'}
                 multiple
                 disabled={loading}
                 height={200}
@@ -86,18 +81,21 @@ const CreatePostModal = () => {
               />
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button
+                color="danger"
+                variant="light"
+                onPress={() => {
+                  reset();
+                  onClose();
+                }}
+              >
                 Close
               </Button>
-              <Button
-                color="primary"
-                isLoading={loading}
-                onPress={() => handleCreatePost(onClose)}
-              >
+              <Button color="primary" isLoading={loading} type="submit">
                 Create
               </Button>
             </ModalFooter>
-          </>
+          </form>
         )}
       </ModalContent>
     </Modal>
