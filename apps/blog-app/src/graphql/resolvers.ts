@@ -4,6 +4,7 @@ import {
   searchUserResolver,
   followUserResolver,
   getLikedPostsByUserResolver,
+  getNotFollowedUserResolver,
 } from './resolvers/user-resolver';
 import {
   getPostsResolver,
@@ -42,6 +43,7 @@ export const resolvers = {
     // getLikedPostByPostId: getLikedPostByPostIdResolver,
     searchUser: searchUserResolver,
     savedPostsByUser: savedPostsByUser,
+    getNotFollowedUser: getNotFollowedUserResolver,
   },
 
   Subscription: {

@@ -12,6 +12,7 @@ export const typeDefs = gql`
     # getLikedPostByPostId(postId: String): Count
     searchUser(query: String): searchResult
     savedPostsByUser(userId: ID!): [PostResult]
+    getNotFollowedUser(userId: ID!): [User]
   }
 
   type Mutation {

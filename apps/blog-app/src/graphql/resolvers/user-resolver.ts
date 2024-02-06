@@ -143,3 +143,32 @@ export const followUserResolver = async (
     throw new GraphQLError(error);
   }
 };
+
+export const getNotFollowedUserResolver = async (
+  _,
+  { userId }: { userId: string }
+) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        followedBy: {
+          none: {
+            id: {
+              equals: userId,
+            },
+          },
+        },
+      },
+      include: {
+        _count: true,
+      },
+    });
+
+    return users;
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};
