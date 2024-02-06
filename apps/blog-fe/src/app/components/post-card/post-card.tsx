@@ -84,7 +84,8 @@ export function PostCard({
 
   return (
     <Card
-      className="w-[340px] sm:w-[440px] lg:min-w-[740px] md:min-w-[540px]"
+      // className="w-[340px] sm:w-[440px] lg:min-w-[740px] md:min-w-[540px]"
+      className="w-full"
       isPressable
       onClick={handleNavigate}
       shadow="sm"

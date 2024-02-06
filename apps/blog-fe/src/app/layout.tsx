@@ -35,10 +35,11 @@ const Layout = () => {
       <aside className="hidden md:block h-screen fixed md:w-[200px] lg:w-[250px]  border-r">
         <Aside />
       </aside>
-      <main className="py-20 ml-0  md:ml-[200px] lg:ml-[250px] sm:px-10">
+      <main className="py-20 ml-0 min-w-max     md:ml-[200px] lg:ml-[250px] lg:mr-[350px] xl:mr-[450px] sm:px-10 px-5 ">
         <CreatePostModal />
         <Outlet />
       </main>
+      <aside className="hidden border-l border-stone-200  lg:block h-screen right-0 top-0 fixed   lg:w-[350px] xl:w-[450px]  border-r"></aside>
     </div>
   );
 };

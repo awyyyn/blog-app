@@ -5,7 +5,7 @@ export interface PostCardSpinnerProps {}
 
 export function PostCardSpinner(props: PostCardSpinnerProps) {
   return (
-    <div className="border relative overflow-hidden shadow-md rounded-lg p-3 w-[340px] space-y-4 sm:w-[440px] lg:min-w-[740px] md:min-w-[540px]">
+    <div className="border relative overflow-hidden shadow-md rounded-lg p-3 space-y-4  w-full">
       <div className="flex  justify-between items-center w-full">
         <div className="flex gap-x-3">
           <div>

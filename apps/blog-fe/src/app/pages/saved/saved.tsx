@@ -76,7 +76,7 @@ export function Saved() {
   };
 
   return (
-    <div className="flex items-center flex-col flex-wrap gap-5 md:max-w-min">
+    <div className="flex items-center flex-col flex-wrap gap-5  ">
       {saved &&
         saved.map((post: PostResult) => (
           <Suspense key={post.id} fallback={<PostCardSpinner />}>

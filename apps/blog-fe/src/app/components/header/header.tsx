@@ -6,6 +6,7 @@ import { Navbar, NavbarBrand, NavbarContent, Link } from '@nextui-org/react';
 import { Link as RouterLink } from 'react-router-dom';
 import SignInButton from '../sign-in-button/sign-in-button';
 import UserNavBarContent from './user-navbar-content';
+import NotificationPopOver from '../notification-popover/notification-popover';
 // import { userStore } from '../../store/userStore';
 export interface HeaderProps {}
 
@@ -36,7 +37,14 @@ export function Header(props: HeaderProps) {
         {/* <input value={query} onChange={(e) => setQuery(e.target.value)} /> */}
         {/* <Input onChange={(e) => setQuery(e.target.value)} /> */}
       </NavbarContent>
-      {isAuthenticated ? <UserNavBarContent /> : <SignInButton />}
+      {isAuthenticated ? (
+        <NavbarContent as="div" justify="end">
+          <NotificationPopOver />
+          <UserNavBarContent />
+        </NavbarContent>
+      ) : (
+        <SignInButton />
+      )}
     </Navbar>
   );
 }

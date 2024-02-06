@@ -1,4 +1,3 @@
-import styles from './post.module.css';
 import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 // import UserAvatar from '../../components/user-avatar/user-avatar';
@@ -156,7 +155,7 @@ export function Post() {
 
   console.log(comments_data, 'e');
   return (
-    <div className={styles['container']}>
+    <div className="px-4 lg:pr-[]">
       <div className="flex gap-x-3">
         <User
           name={`${data?.getPostById.author.firstname} ${data?.getPostById.author.lastname}`}
