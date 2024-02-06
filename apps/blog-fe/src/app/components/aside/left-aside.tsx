@@ -6,7 +6,7 @@ import { MdSavedSearch } from 'react-icons/md';
 import { IoCreate } from 'react-icons/io5';
 import { useCreatePostStore } from '../../store/createPostStore';
 
-const Aside = () => {
+const LeftAside = () => {
   const { setModal, modal } = useCreatePostStore();
 
   const style = {
@@ -70,4 +70,4 @@ const Aside = () => {
   );
 };
 
-export default Aside;
+export default LeftAside;

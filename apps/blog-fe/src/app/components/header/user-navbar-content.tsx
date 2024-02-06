@@ -4,7 +4,6 @@ import {
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
-  NavbarContent,
   User,
 } from '@nextui-org/react';
 import { useAuth0 } from '@auth0/auth0-react';
