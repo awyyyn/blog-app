@@ -13,9 +13,9 @@ import { useState } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
-import { SAVE_POST, UNSAVE_POST } from '../../queries/queries';
 import { useMutation } from '@apollo/client';
 import { userStore } from '../../store/userStore';
+import { SAVE_POST, UNSAVE_POST } from '../../gql/mutations/post';
 // import { useMutation } from '@apollo/client';
 
 /* eslint-disable-next-line */

@@ -6,17 +6,15 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { VscSend } from 'react-icons/vsc';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Comment as CommentType } from '@blog-app/shared';
-import {
-  ADD_COMMENT,
-  GET_COMMENTS,
-  GET_POST,
-  LIKE_POST,
-  SUBSCRIBE_COMMENT,
-  SUBSCRIBE_POST_LIKE,
-  UNLIKE_POST,
-} from '../../queries/queries';
+
 import { CommentsSpinner } from '../../components/comments/comments';
 import { userStore } from '../../store/userStore';
+import { SUBSCRIBE_COMMENT } from '../../gql/subscriptions/comment';
+import { SUBSCRIBE_POST_LIKE } from '../../gql/subscriptions/post';
+import { GET_COMMENTS } from '../../gql/queries/comment';
+import { GET_POST } from '../../gql/queries/post';
+import { LIKE_POST, UNLIKE_POST } from '../../gql/mutations/post';
+import { ADD_COMMENT } from '../../gql/mutations/comment';
 const Comments = lazy(() => import('../../components/comments/comments'));
 
 export function Post() {

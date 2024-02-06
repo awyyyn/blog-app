@@ -1,13 +1,11 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { Suspense, lazy } from 'react';
 import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
-import {
-  GET_POSTS_WITH_PAGINATION,
-  LIKE_POST,
-  UNLIKE_POST,
-} from '../../queries/queries';
+
 import { userStore } from '../../store/userStore';
 import { PostResult } from '@blog-app/shared';
+import { GET_POSTS_WITH_PAGINATION } from '../../gql/queries/post';
+import { LIKE_POST, UNLIKE_POST } from '../../gql/mutations/post';
 const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
 export function Home() {

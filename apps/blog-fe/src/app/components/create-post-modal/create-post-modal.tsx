@@ -11,9 +11,9 @@ import {
 } from '@nextui-org/react';
 import { useCreatePostStore } from '../../store/createPostStore';
 import { useMutation } from '@apollo/client';
-import { CREATE_POST } from '../../queries/queries';
 import { userStore } from '../../store/userStore';
 import { useNavigate } from 'react-router-dom';
+import { CREATE_POST } from '../../gql/mutations/post';
 
 type Input = {
   title: string;
