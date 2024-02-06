@@ -58,7 +58,7 @@ export function Home() {
   return (
     <div className="flex items-center flex-col flex-wrap gap-5 md:max-w-min">
       {data &&
-        data.getPostsWithPagination.map((post: PostResult) => (
+        data?.getPostsWithPagination.map((post: PostResult) => (
           <Suspense key={post.id} fallback={<PostCardSpinner />}>
             <PostCard
               handleLike={() => {
@@ -72,12 +72,12 @@ export function Home() {
             />
           </Suspense>
         ))}
-      {data.getPostsWithPagination.length >= 20 && (
+      {data?.getPostsWithPagination.length >= 20 && (
         <button
           onClick={() => {
             fetchMore({
               variables: {
-                offset: data.getPostsWithPagination.length,
+                offset: data?.getPostsWithPagination.length,
               },
             });
           }}

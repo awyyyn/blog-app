@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
 import {
-  GET_POSTS_WITH_PAGINATION,
   LIKE_POST,
   SAVED_POST,
   UNLIKE_POST,
@@ -34,12 +33,14 @@ export function Saved() {
 
   /* LIKE MUTATION */
   const [like_post] = useMutation(LIKE_POST, {
-    refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],
+    refetchQueries: [SAVED_POST, 'savedPostsByUser'],
   });
   const [unlike_post] = useMutation(UNLIKE_POST, {
-    refetchQueries: [GET_POSTS_WITH_PAGINATION, 'getPostsWithPagination'],
+    refetchQueries: [SAVED_POST, 'savedPostsByUser'],
   });
-  const [unsave] = useMutation(UNSAVE_POST);
+  const [unsave] = useMutation(UNSAVE_POST, {
+    refetchQueries: [SAVED_POST, 'savedPostsByUser'],
+  });
 
   if (loading) {
     return <PostCardSpinner />;
@@ -71,8 +72,6 @@ export function Saved() {
         postId,
         userId: user.id,
       },
-    }).then(() => {
-      setSaved(saved?.filter((post) => post.id !== postId));
     });
   };
 

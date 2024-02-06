@@ -58,7 +58,7 @@ const Aside = () => {
             variant="light"
             to={path}
             fullWidth
-            // reloadDocument={path === '/' ? true : false}
+            reloadDocument={path === '/' ? true : false}
             className="justify-start gap-x-4"
             as={RouterLink}
           >
