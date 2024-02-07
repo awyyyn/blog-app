@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
+import { gql } from '../../gql-types';
 
-export const ADD_COMMENT = gql`
+export const ADD_COMMENT = gql(/* GraphQL */ `
   mutation CreateComment($commentInput: commentInput) {
     createComment(commentInput: $commentInput) {
       id
@@ -11,4 +11,4 @@ export const ADD_COMMENT = gql`
       }
     }
   }
-`;
+`);

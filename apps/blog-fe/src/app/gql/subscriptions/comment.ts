@@ -1,4 +1,6 @@
-export const SUBSCRIBE_COMMENT = gql`
+import { gql } from '../../gql-types';
+
+export const SUBSCRIBE_COMMENT = gql(/* GraphQL */ `
   subscription Subscription($postId: ID!) {
     commentAdded(postId: $postId) {
       id
@@ -11,4 +13,4 @@ export const SUBSCRIBE_COMMENT = gql`
       }
     }
   }
-`;
+`);

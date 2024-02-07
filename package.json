@@ -5,7 +5,8 @@
   "scripts": {
     "blog-app:dev": "npx nx run blog-app:serve --configuration=development",
     "blog-fe:dev": "npx nx run blog-fe:serve --configuration=development",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen-server": "graphql-codegen --config backend-codegen.ts",
+    "codegen-client": "graphql-codegen --config frontend-codegen.ts"
   },
   "private": true,
   "dependencies": {
@@ -43,11 +44,13 @@
     "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/client-preset": "^4.2.2",
     "@graphql-codegen/introspection": "4.0.0",
     "@graphql-codegen/typescript": "4.0.1",
     "@graphql-codegen/typescript-mongodb": "3.0.0",
     "@graphql-codegen/typescript-resolvers": "4.0.1",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@nx/esbuild": "17.2.8",
     "@nx/eslint": "17.2.8",
     "@nx/eslint-plugin": "17.2.8",

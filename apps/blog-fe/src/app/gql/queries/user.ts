@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
+import { gql } from '../../gql-types';
 
-export const SEARCH_USER = gql`
+export const SEARCH_USER = gql(/* GraphQL */ `
   query Query($query: String) {
     searchUser(query: $query) {
       data {
@@ -13,4 +13,20 @@ export const SEARCH_USER = gql`
       count
     }
   }
-`;
+`);
+
+export const GET_NOT_FOLLOWED_USERS = gql(/* GraphQL */ `
+  query GetNotFollowedUser($userId: ID!) {
+    getNotFollowedUser(userId: $userId) {
+      id
+      lastname
+      firstname
+      username
+      profile
+      _count {
+        following
+        followedBy
+      }
+    }
+  }
+`);

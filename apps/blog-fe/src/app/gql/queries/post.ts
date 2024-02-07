@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
+import { gql } from '../../gql-types';
 
-export const GET_POST = gql`
+export const GET_POST = gql(/* GraphQL */ `
   query GetPostById($postId: ID!, $userId: ID) {
     getPostById(id: $postId, userId: $userId) {
       author {
@@ -20,9 +20,9 @@ export const GET_POST = gql`
       }
     }
   }
-`;
+`);
 
-export const GET_POSTS_WITH_PAGINATION = gql`
+export const GET_POSTS_WITH_PAGINATION = gql(/* GraphQL */ `
   query GetPostsWithPagination($offset: Int, $limit: Int, $userId: ID!) {
     getPostsWithPagination(offset: $offset, limit: $limit, userId: $userId) {
       _count {
@@ -44,9 +44,9 @@ export const GET_POSTS_WITH_PAGINATION = gql`
       }
     }
   }
-`;
+`);
 
-export const SAVED_POST = gql`
+export const SAVED_POST = gql(/* GraphQL */ `
   query SavedPostsByUser($userId: ID!) {
     savedPostsByUser(userId: $userId) {
       description
@@ -66,4 +66,4 @@ export const SAVED_POST = gql`
       liked
     }
   }
-`;
+`);
