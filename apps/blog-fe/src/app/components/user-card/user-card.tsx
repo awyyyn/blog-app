@@ -1,32 +1,35 @@
 import { Card, CardHeader, Avatar, Button } from '@nextui-org/react';
 import { useState } from 'react';
+import { User } from '../../gql-types/graphql';
 
-const UserCard = () => {
+const UserCard = ({
+  firstname,
+  lastname,
+  id,
+  _count,
+  profile,
+  username,
+}: User) => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   return (
     <Card className="w-full  border-none" shadow="none">
       <CardHeader className="justify-between ">
         <div className="flex gap-5 items-center">
-          <Avatar
-            isBordered
-            radius="full"
-            size="md"
-            src="/avatars/avatar-1.png"
-          />
+          <Avatar isBordered radius="full" size="md" src={profile as string} />
           <div className="block">
             <div className="flex  items-center gap-x-2">
               <h4 className="text-small font-semibold leading-none text-default-600">
-                Zoey Lang
+                {firstname} {lastname}
               </h4>
               <h5 className="text-small tracking-tight text-default-400">
-                @zoeylang
+                {username}
               </h5>
             </div>
             <div className="flex gap-x-2 flex-wrap">
               <div className="flex gap-1">
                 <p className="font-semibold text-default-400 lg:text-xs xl:text-sm">
-                  4
+                  {_count?.following}
                 </p>
                 <p className=" text-default-400 lg:text-xs xl:text-sm">
                   Following
@@ -34,7 +37,7 @@ const UserCard = () => {
               </div>
               <div className="flex gap-1">
                 <p className="font-semibold text-default-400 lg:text-xs xl:text-sm">
-                  97.1K
+                  {_count?.followedBy}
                 </p>
                 <p className="text-default-400 lg:text-xs xl:text-sm">
                   Followers

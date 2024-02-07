@@ -5,8 +5,6 @@ import { Button, Divider, Input, Spinner, User } from '@nextui-org/react';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { VscSend } from 'react-icons/vsc';
 import { Suspense, lazy, useEffect, useState } from 'react';
-import { Comment as CommentType } from '@blog-app/shared';
-
 import { CommentsSpinner } from '../../components/comments/comments';
 import { userStore } from '../../store/userStore';
 import { SUBSCRIBE_COMMENT } from '../../gql/subscriptions/comment';
@@ -15,6 +13,7 @@ import { GET_COMMENTS } from '../../gql/queries/comment';
 import { GET_POST } from '../../gql/queries/post';
 import { LIKE_POST, UNLIKE_POST } from '../../gql/mutations/post';
 import { ADD_COMMENT } from '../../gql/mutations/comment';
+import { Comment } from '../../gql-types/graphql';
 const Comments = lazy(() => import('../../components/comments/comments'));
 
 export function Post() {
@@ -23,10 +22,10 @@ export function Post() {
   const params = useParams();
   const [comment, setComment] = useState('');
   const postInput = {
-    userId: user.id,
-    postId: params.id,
+    userId: user.id as string,
+    postId: params.id as string,
   };
-  const [comments, setComments] = useState<CommentType[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [add_comment, { loading: adding_comment }] = useMutation(ADD_COMMENT);
   const [like_post] = useMutation(LIKE_POST, {
     variables: { likePostInput: postInput },
@@ -43,15 +42,15 @@ export function Post() {
     variables: postInput,
     onCompleted(data) {
       setCount({
-        likes: data?.getPostById._count.liked_by,
-        comments: data?.getPostById._count.comments,
+        likes: data?.getPostById?._count?.liked_by,
+        comments: data?.getPostById?._count?.comments,
       });
-      setLiked(data?.getPostById.liked);
+      setLiked(data?.getPostById?.liked as boolean);
     },
   });
   const [count, setCount] = useState({
-    likes: data?.getPostById._count.liked_by,
-    comments: data?.getPostById._count.comments,
+    likes: data?.getPostById?._count?.liked_by,
+    comments: data?.getPostById?._count?.comments,
   });
   const {
     data: comments_data,
@@ -61,7 +60,7 @@ export function Post() {
     fetchMore: fetchMore_comments,
   } = useQuery(GET_COMMENTS, {
     variables: {
-      postId: params.id,
+      postId: postInput.postId,
       offset: 0,
     },
   });
@@ -74,40 +73,40 @@ export function Post() {
 
   useEffect(() => {
     if (comments_data) {
-      setComments(comments_data.getCommentsByPostId);
+      setComments(comments_data?.getCommentsByPostId as Comment[]);
     }
   }, [comments_data]);
 
   /* SUBSCRIBE COMMENT */
   useSubscription(SUBSCRIBE_COMMENT, {
-    variables: { postId: params.id },
+    variables: { postId: postInput.postId },
     onData(options) {
       if (options.data?.error) return console.log(options);
       setCount((count) => ({
         ...count,
-        comments: count.comments + 1,
+        comments: (count?.comments as number) + 1,
       }));
-      setComments((prevComments) => [
-        options.data?.data?.commentAdded,
-        ...prevComments,
+      setComments((pre) => [
+        options.data?.data?.commentAdded as Comment,
+        ...pre,
       ]);
     },
   });
 
   /* SUBSCRIBE LIKE/UNLIKE POST */
   useSubscription(SUBSCRIBE_POST_LIKE, {
-    variables: { postId: params.id },
+    variables: { postId: postInput.postId },
     onData(options) {
       if (options.data?.error) return console.log(options);
-      if (options.data?.data?.postLiked.type === 'LIKE') {
+      if (options.data?.data?.postLiked?.type === 'LIKE') {
         setCount((count) => ({
           ...count,
-          likes: count.likes + 1,
+          likes: (count.likes as number) + 1,
         }));
       } else {
         setCount((count) => ({
           ...count,
-          likes: count.likes - 1,
+          likes: (count.likes as number) - 1,
         }));
       }
     },
@@ -156,17 +155,17 @@ export function Post() {
     <div className="px-4 lg:pr-[]">
       <div className="flex gap-x-3">
         <User
-          name={`${data?.getPostById.author.firstname} ${data?.getPostById.author.lastname}`}
-          description={data?.getPostById.author.username}
+          name={`${data?.getPostById?.author?.firstname} ${data?.getPostById?.author?.lastname}`}
+          description={data?.getPostById?.author?.username}
           avatarProps={{
-            src: data?.getPostById.author.profile,
+            src: data?.getPostById?.author?.profile as string,
           }}
         />
       </div>
       <Divider className="my-4 bg-stone-100" />
       <div>
-        <h1 className="font-bold text-xl">{data?.getPostById.title}</h1>
-        <p>{data?.getPostById.description}</p>
+        <h1 className="font-bold text-xl">{data?.getPostById?.title}</h1>
+        <p>{data?.getPostById?.description}</p>
       </div>
       <div className="flex gap-x-3 mt-2">
         <div className="flex items-center">
@@ -240,9 +239,9 @@ export function Post() {
           <Comments profile={user.profile as string} comments={comments} />
         </Suspense>
       )}
-      {data?.getPostById._count.comments !==
-        comments_data?.getCommentsByPostId.length &&
-        comments_data?.getCommentsByPostId.length >= 10 && (
+      {data?.getPostById?._count?.comments !==
+        comments_data?.getCommentsByPostId?.length &&
+        (comments_data?.getCommentsByPostId?.length as number) >= 10 && (
           <Button
             className="mt-5 mx-auto block"
             fullWidth

@@ -17,7 +17,7 @@ export const registerController = async (req: Request, res: Response) => {
           firstname: '',
           lastname: '',
           profile,
-          username,
+          username: `@${username}`,
         },
       });
       return res.status(201).json({ data: createdUser });

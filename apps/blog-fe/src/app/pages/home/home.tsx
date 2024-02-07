@@ -3,23 +3,21 @@ import { Suspense, lazy } from 'react';
 import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
 
 import { userStore } from '../../store/userStore';
-import { PostResult } from '@blog-app/shared';
 import { GET_POSTS_WITH_PAGINATION } from '../../gql/queries/post';
 import { LIKE_POST, UNLIKE_POST } from '../../gql/mutations/post';
+import { PostResult } from '../../gql-types/graphql';
 const PostCard = lazy(() => import('../../components/post-card/post-card'));
 
 export function Home() {
   const { user } = userStore();
-  console.log(user, 'usersds');
   const { fetchMore, data, loading } = useQuery(GET_POSTS_WITH_PAGINATION, {
     variables: {
       limit: 20,
       offset: 0,
-      userId: user.id,
+      userId: user.id as string,
     },
     pollInterval: 300000,
   });
-  console.log(data, 'sd');
 
   /* LIKE MUTATION */
   const [like_post] = useMutation(LIKE_POST, {
@@ -37,7 +35,7 @@ export function Home() {
     like_post({
       variables: {
         likePostInput: {
-          userId: user.id,
+          userId: user.id as string,
           postId,
         },
       },
@@ -47,7 +45,7 @@ export function Home() {
   const handleUnlike = (postId: string) => {
     unlike_post({
       variables: {
-        userId: user.id,
+        userId: user.id as string,
         postId,
       },
     });
@@ -56,26 +54,26 @@ export function Home() {
   return (
     <div className="flex items-center flex-col flex-wrap gap-5 ">
       {data &&
-        data?.getPostsWithPagination.map((post: PostResult) => (
-          <Suspense key={post.id} fallback={<PostCardSpinner />}>
+        data?.getPostsWithPagination?.map((post) => (
+          <Suspense key={post?.id} fallback={<PostCardSpinner />}>
             <PostCard
               handleLike={() => {
-                if (post.liked) {
-                  handleUnlike(post.id);
+                if (post?.liked) {
+                  handleUnlike(post?.id as string);
                 } else {
-                  handleLike(post.id);
+                  handleLike(post?.id as string);
                 }
               }}
-              {...post}
+              {...(post as PostResult)}
             />
           </Suspense>
         ))}
-      {data?.getPostsWithPagination.length >= 20 && (
+      {(data?.getPostsWithPagination?.length as number) >= 20 && (
         <button
           onClick={() => {
             fetchMore({
               variables: {
-                offset: data?.getPostsWithPagination.length,
+                offset: data?.getPostsWithPagination?.length,
               },
             });
           }}

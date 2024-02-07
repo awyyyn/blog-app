@@ -116,6 +116,35 @@ export const searchUserResolver = async (_, { query }: { query: string }) => {
   }
 };
 
+export const getNotFollowedUserResolver = async (
+  _,
+  { userId }: { userId: string }
+) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          not: userId,
+        },
+        followedBy: {
+          none: {
+            id: {
+              equals: userId,
+            },
+          },
+        },
+      },
+      include: {
+        _count: true,
+      },
+    });
+
+    return users;
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};
+
 export const followUserResolver = async (
   _,
   { userId, followId }: { userId: string; followId: string }
@@ -144,30 +173,57 @@ export const followUserResolver = async (
   }
 };
 
-export const getNotFollowedUserResolver = async (
+export const removeFollowedUserResolver = async (
   _,
-  { userId }: { userId: string }
+  { userId, unfollowUserId }: { userId: string; unfollowUserId: string }
 ) => {
   try {
-    const users = await prisma.user.findMany({
-      where: {
-        id: {
-          not: userId,
-        },
-        followedBy: {
-          none: {
-            id: {
-              equals: userId,
-            },
+    await prisma.user.update({
+      data: {
+        following: {
+          disconnect: {
+            id: unfollowUserId,
           },
         },
       },
-      include: {
-        _count: true,
+      where: {
+        id: userId,
       },
     });
+    return {
+      message: 'User unfollowed!',
+      status: 200,
+    };
+  } catch (error) {
+    throw new GraphQLError(error);
+  }
+};
 
-    return users;
+export const removeFollowerUserResolver = async (
+  _,
+  { userId, followerUserId }: { userId: string; followerUserId: string }
+) => {
+  try {
+    try {
+      await prisma.user.update({
+        data: {
+          followedBy: {
+            disconnect: {
+              id: followerUserId,
+            },
+          },
+        },
+        where: {
+          id: userId,
+        },
+      });
+      return {
+        message: 'User unfollowed!',
+        status: 200,
+      };
+    } catch (error) {
+      throw new GraphQLError(error);
+    }
   } catch (error) {
     throw new GraphQLError(error);
   }

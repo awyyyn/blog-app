@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import Header from './components/header/header';
 import { Outlet } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { userStore } from './store/userStore';
 import CreatePostModal from './components/create-post-modal/create-post-modal';
 import LeftAside from './components/aside/left-aside';
-import RightAside from './components/aside/right-aside';
+const RightAside = lazy(() => import('./components/aside/right-aside'));
 
 const Layout = () => {
   const { setUserInfo } = userStore();
@@ -41,7 +41,9 @@ const Layout = () => {
         <Outlet />
       </main>
       <aside className="hidden border-l border-stone-200  lg:block h-screen right-0 top-0 fixed   lg:w-[350px] xl:w-[450px]  border-r">
-        <RightAside />
+        <Suspense fallback={<h1>loadingg...</h1>}>
+          <RightAside />
+        </Suspense>
       </aside>
     </div>
   );
