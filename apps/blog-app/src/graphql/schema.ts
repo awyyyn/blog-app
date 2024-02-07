@@ -24,12 +24,14 @@ export const typeDefs = gql`
     createComment(commentInput: commentInput): Comment!
     #like post
     likePost(likePostInput: likePostInput): Post
-    unlikePost(userId: ID!, postId: ID!): DeleteResult
+    unlikePost(userId: ID!, postId: ID!): Result
     # #like comment
     # likeComment(userId: ID!): Comment
-    followUser(userId: ID!, followId: ID!): User
+    followUser(userId: ID!, followId: ID!): Result
     savePost(userId: ID!, postId: ID!): [Post]
-    unsavePost(userId: ID!, postId: ID!): DeleteResult
+    unsavePost(userId: ID!, postId: ID!): Result
+    removeFollowedUser(userId: ID!, unfollowUserId: ID!): Result
+    removeFollowerUser(userId: ID!, followerUserId: ID!): Result
   }
 
   type Subscription {
@@ -68,7 +70,7 @@ export const typeDefs = gql`
     count: Int
   }
 
-  type DeleteResult {
+  type Result {
     status: Int
     message: String
   }

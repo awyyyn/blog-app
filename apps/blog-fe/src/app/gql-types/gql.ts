@@ -19,6 +19,9 @@ const documents = {
     "\n  mutation CreatePost($postInput: postInput) {\n    createPost(postInput: $postInput) {\n      id\n      description\n    }\n  }\n": types.CreatePostDocument,
     "\n  mutation UnlikePost($postId: ID!, $userId: ID!) {\n    unlikePost(userId: $userId, postId: $postId) {\n      status\n      message\n    }\n  }\n": types.UnlikePostDocument,
     "\n  mutation LikePost($likePostInput: likePostInput) {\n    likePost(likePostInput: $likePostInput) {\n      id\n    }\n  }\n": types.LikePostDocument,
+    "\n  mutation RemoveFollowedUser($userId: ID!, $unfollowUserId: ID!) {\n    removeFollowedUser(userId: $userId, unfollowUserId: $unfollowUserId) {\n      message\n      status\n    }\n  }\n": types.RemoveFollowedUserDocument,
+    "\n  mutation FollowUser($userId: ID!, $followId: ID!) {\n    followUser(userId: $userId, followId: $followId) {\n      status\n      message\n    }\n  }\n": types.FollowUserDocument,
+    "\n  mutation RemoveFollowerUser($userId: ID!, $followerUserId: ID!) {\n    removeFollowerUser(userId: $userId, followerUserId: $followerUserId) {\n      status\n      message\n    }\n  }\n": types.RemoveFollowerUserDocument,
     "\n  query GetCommentsByPostId($postId: ID!, $offset: Int) {\n    getCommentsByPostId(postId: $postId, offset: $offset) {\n      comment\n      user {\n        firstname\n        lastname\n        username\n      }\n      id\n    }\n  }\n": types.GetCommentsByPostIdDocument,
     "\n  query GetPostById($postId: ID!, $userId: ID) {\n    getPostById(id: $postId, userId: $userId) {\n      author {\n        firstname\n        lastname\n        username\n        profile\n      }\n      createdAt\n      title\n      id\n      liked\n      description\n      _count {\n        comments\n        liked_by\n      }\n    }\n  }\n": types.GetPostByIdDocument,
     "\n  query GetPostsWithPagination($offset: Int, $limit: Int, $userId: ID!) {\n    getPostsWithPagination(offset: $offset, limit: $limit, userId: $userId) {\n      _count {\n        liked_by\n        comments\n      }\n      id\n      liked\n      description\n      updatedAt\n      createdAt\n      saved\n      title\n      author {\n        profile\n        firstname\n        lastname\n        username\n      }\n    }\n  }\n": types.GetPostsWithPaginationDocument,
@@ -67,6 +70,18 @@ export function gql(source: "\n  mutation UnlikePost($postId: ID!, $userId: ID!)
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation LikePost($likePostInput: likePostInput) {\n    likePost(likePostInput: $likePostInput) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation LikePost($likePostInput: likePostInput) {\n    likePost(likePostInput: $likePostInput) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation RemoveFollowedUser($userId: ID!, $unfollowUserId: ID!) {\n    removeFollowedUser(userId: $userId, unfollowUserId: $unfollowUserId) {\n      message\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveFollowedUser($userId: ID!, $unfollowUserId: ID!) {\n    removeFollowedUser(userId: $userId, unfollowUserId: $unfollowUserId) {\n      message\n      status\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation FollowUser($userId: ID!, $followId: ID!) {\n    followUser(userId: $userId, followId: $followId) {\n      status\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation FollowUser($userId: ID!, $followId: ID!) {\n    followUser(userId: $userId, followId: $followId) {\n      status\n      message\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation RemoveFollowerUser($userId: ID!, $followerUserId: ID!) {\n    removeFollowerUser(userId: $userId, followerUserId: $followerUserId) {\n      status\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation RemoveFollowerUser($userId: ID!, $followerUserId: ID!) {\n    removeFollowerUser(userId: $userId, followerUserId: $followerUserId) {\n      status\n      message\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

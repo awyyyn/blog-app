@@ -1,6 +1,11 @@
 import { Card, CardHeader, Avatar, Button } from '@nextui-org/react';
 import { useState } from 'react';
 import { User } from '../../gql-types/graphql';
+// import { useMutation } from '@apollo/client';
+
+interface UserCardProps extends User {
+  handleFollow: (followUserId: string) => void;
+}
 
 const UserCard = ({
   firstname,
@@ -9,8 +14,10 @@ const UserCard = ({
   _count,
   profile,
   username,
-}: User) => {
+  handleFollow,
+}: UserCardProps) => {
   const [isFollowed, setIsFollowed] = useState(false);
+  // const [] = useMutation();
 
   return (
     <Card className="w-full  border-none" shadow="none">
@@ -58,9 +65,12 @@ const UserCard = ({
           radius="full"
           size="md"
           variant={isFollowed ? 'bordered' : 'solid'}
-          onPress={() => setIsFollowed(!isFollowed)}
+          onPress={() => {
+            handleFollow(id as string);
+            setIsFollowed(!isFollowed);
+          }}
         >
-          {isFollowed ? 'Unfollow' : 'Follow'}
+          {isFollowed ? 'Following' : 'Follow'}
         </Button>
       </CardHeader>
     </Card>

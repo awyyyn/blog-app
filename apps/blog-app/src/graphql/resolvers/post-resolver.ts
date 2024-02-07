@@ -70,6 +70,26 @@ export const getPostByIdResolver = async (
   }
 };
 
+export const getTotalLikesByPostIdResolver = async (
+  _,
+  { postId }: { postId: string }
+) => {
+  try {
+    const total_likes = await prisma.post.findUnique({
+      include: {
+        _count: true,
+      },
+      where: {
+        id: postId,
+      },
+    });
+    return total_likes._count;
+  } catch (error) {
+    console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};
+
 export const getPostsWithPaginationResolver = async (
   _,
   { limit, offset, userId }: { offset: number; limit: number; userId: string }
@@ -85,24 +105,35 @@ export const getPostsWithPaginationResolver = async (
           },
         },
         _count: true,
-        author: true,
+        author: {
+          include: {
+            followedBy: true,
+          },
+        },
       },
       where: {
         author: {
-          followedBy: {
-            some: {
-              id: userId,
+          OR: [
+            {
+              followedByIDs: {
+                has: userId,
+              },
             },
-          },
+            {
+              followedBy: {
+                every: {
+                  id: userId,
+                },
+              },
+            },
+          ],
         },
       },
     });
 
-    posts = posts.flatMap((post) => {
+    posts = posts.map((post) => {
       const liked = post.liked_by.find((i) => i.id === userId);
       const saved = post.saved_by_ids.includes(userId);
-
-      console.log(saved, 'isSaved?');
 
       return {
         ...post,
@@ -110,29 +141,7 @@ export const getPostsWithPaginationResolver = async (
         saved,
       };
     });
-    // console.log(posts);
-
     return posts;
-  } catch (error) {
-    console.log(error.message);
-    throw new GraphQLError(error);
-  }
-};
-
-export const getTotalLikesByPostIdResolver = async (
-  _,
-  { postId }: { postId: string }
-) => {
-  try {
-    const total_likes = await prisma.post.findUnique({
-      include: {
-        _count: true,
-      },
-      where: {
-        id: postId,
-      },
-    });
-    return total_likes._count;
   } catch (error) {
     console.log(error.message);
     throw new GraphQLError(error);
