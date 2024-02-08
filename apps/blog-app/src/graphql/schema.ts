@@ -13,6 +13,7 @@ export const typeDefs = gql`
     searchUser(query: String): searchResult
     savedPostsByUser(userId: ID!): [PostResult]
     getNotFollowedUser(userId: ID!): [User]
+    getMostTalkedPosts: [PostResult]
   }
 
   type Mutation {

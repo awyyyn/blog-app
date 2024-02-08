@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import PostCardSpinner from '../../components/post-card-spinner/post-card-spinner';
 
 import { userStore } from '../../store/userStore';
@@ -18,6 +18,8 @@ export function Home() {
     },
     pollInterval: 300000,
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchedAllPosts, setIsFetchedAllPosts] = useState(false);
 
   /* LIKE MUTATION */
   const [like_post] = useMutation(LIKE_POST, {
@@ -70,15 +72,27 @@ export function Home() {
         ))}
       {(data?.getPostsWithPagination?.length as number) >= 20 && (
         <button
-          onClick={() => {
+          onClick={async () => {
+            setIsLoading(true);
             fetchMore({
               variables: {
                 offset: data?.getPostsWithPagination?.length,
               },
+            }).then((data) => {
+              if (data.data.getPostsWithPagination?.length === 0) {
+                setIsLoading(false);
+                setIsFetchedAllPosts(true);
+              }
+              return data;
             });
           }}
+          disabled={isFetchedAllPosts || isLoading}
         >
-          Fetch More
+          {!isFetchedAllPosts
+            ? isLoading
+              ? 'Loading...'
+              : 'Load more'
+            : 'No more posts'}
         </button>
       )}
     </div>

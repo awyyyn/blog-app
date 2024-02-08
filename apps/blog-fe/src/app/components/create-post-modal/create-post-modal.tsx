@@ -39,12 +39,13 @@ const CreatePostModal = () => {
         postInput: {
           description: values.description,
           title: values.title,
-          userId: user.id,
+          userId: user.id as string,
         },
       },
     }).then((data) => {
+      setModal(false);
       reset();
-      navigate(`/post/${data.data.createPost.id}`);
+      navigate(`/post/${data?.data?.createPost.id}`);
     });
   };
 

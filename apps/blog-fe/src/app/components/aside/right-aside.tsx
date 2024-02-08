@@ -21,21 +21,26 @@ const RightAside = () => {
 
   return (
     <div className="py-20 space-y-2 w-full px-5">
-      <h1 className="text-lg">User Suggestions</h1>
-      {data?.getNotFollowedUser?.map((user) => (
-        <UserCard
-          handleFollow={(id: string) => {
-            follow({
-              variables: {
-                followId: id,
-                userId: currentUser.id as string,
-              },
-            });
-          }}
-          key={user?.id}
-          {...(user as User)}
-        />
-      ))}
+      {(data?.getNotFollowedUser?.length as number) > 0 && (
+        <>
+          <h1 className="text-lg">User Suggestions</h1>
+          {data?.getNotFollowedUser?.map((user) => (
+            <UserCard
+              handleFollow={(id: string) => {
+                follow({
+                  variables: {
+                    followId: id,
+                    userId: currentUser.id as string,
+                  },
+                });
+              }}
+              key={user?.id}
+              {...(user as User)}
+            />
+          ))}
+        </>
+      )}
+      <h1>Most talked posts</h1>
     </div>
   );
 };

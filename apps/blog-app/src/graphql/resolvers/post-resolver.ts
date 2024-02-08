@@ -98,6 +98,9 @@ export const getPostsWithPaginationResolver = async (
     let posts = await prisma.post.findMany({
       skip: offset,
       take: limit,
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         liked_by: {
           select: {
@@ -109,24 +112,6 @@ export const getPostsWithPaginationResolver = async (
           include: {
             followedBy: true,
           },
-        },
-      },
-      where: {
-        author: {
-          OR: [
-            {
-              followedByIDs: {
-                has: userId,
-              },
-            },
-            {
-              followedBy: {
-                every: {
-                  id: userId,
-                },
-              },
-            },
-          ],
         },
       },
     });
@@ -142,6 +127,33 @@ export const getPostsWithPaginationResolver = async (
       };
     });
     return posts;
+  } catch (error) {
+    console.log(error.message);
+    throw new GraphQLError(error);
+  }
+};
+
+export const getMostTalkedPostsResolver = async () => {
+  try {
+    const result = await prisma.post.findMany({
+      orderBy: {
+        liked_by: {
+          _count: 'desc',
+        },
+      },
+      take: 5,
+      include: {
+        _count: true,
+        author: true,
+      },
+    });
+
+    // let posts = result.sort((a, b) => b._count.liked_by - a._count.liked_by);
+
+    // console.log(result.map((p) => p._count.liked_by));
+    // posts = posts.slice(0, 5);
+    // console.log(posts.map((p) => p._count.liked_by));
+    return result;
   } catch (error) {
     console.log(error.message);
     throw new GraphQLError(error);

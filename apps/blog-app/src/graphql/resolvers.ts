@@ -14,6 +14,7 @@ import {
   getPostByIdResolver,
   getPostsWithPaginationResolver,
   getTotalLikesByPostIdResolver,
+  getMostTalkedPostsResolver,
 } from './resolvers/post-resolver';
 import {
   createCommentResolver,
@@ -46,6 +47,7 @@ export const resolvers = {
     searchUser: searchUserResolver,
     savedPostsByUser: savedPostsByUser,
     getNotFollowedUser: getNotFollowedUserResolver,
+    getMostTalkedPosts: getMostTalkedPostsResolver,
   },
 
   Subscription: {
