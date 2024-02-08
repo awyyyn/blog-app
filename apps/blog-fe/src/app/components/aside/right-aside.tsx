@@ -1,9 +1,14 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_NOT_FOLLOWED_USERS } from '../../gql/queries/user';
+import {
+  GET_MOST_TALKED_POSTS,
+  GET_NOT_FOLLOWED_USERS,
+} from '../../gql/queries/user';
 import { userStore } from '../../store/userStore';
 import { User } from '../../gql-types/graphql';
 import UserCard from '../user-card/user-card';
 import { FOLLOW_USER, REMOVE_FOLLOWED_USER } from '../../gql/mutations/user';
+import TopPostCard from '../top-post-card/top-post-card';
+import { Suspense } from 'react';
 
 const RightAside = () => {
   const { user: currentUser } = userStore();
@@ -16,6 +21,7 @@ const RightAside = () => {
   const [follow, { loading, error: followError }] = useMutation(FOLLOW_USER, {
     refetchQueries: [GET_NOT_FOLLOWED_USERS],
   });
+  const { data: topPost } = useQuery(GET_MOST_TALKED_POSTS);
 
   if (error) return <h1>Error : {error.message}</h1>;
 
@@ -41,6 +47,18 @@ const RightAside = () => {
         </>
       )}
       <h1>Most talked posts</h1>
+      <div className="space-y-7">
+        {topPost?.getMostTalkedPosts?.map((post) => (
+          <TopPostCard
+            content={post?.description as string}
+            firstname={post?.author?.firstname as string}
+            id={post?.id as string}
+            lastname={post?.author?.lastname as string}
+            title={post?.title as string}
+            key={post?.id as string}
+          />
+        ))}
+      </div>
     </div>
   );
 };

@@ -28,6 +28,7 @@ const documents = {
     "\n  query SavedPostsByUser($userId: ID!) {\n    savedPostsByUser(userId: $userId) {\n      description\n      title\n      id\n      _count {\n        comments\n        liked_by\n      }\n      author {\n        username\n        profile\n        firstname\n        lastname\n      }\n      createdAt\n      liked\n    }\n  }\n": types.SavedPostsByUserDocument,
     "\n  query Query($query: String) {\n    searchUser(query: $query) {\n      data {\n        firstname\n        lastname\n        id\n        username\n        profile\n      }\n      count\n    }\n  }\n": types.QueryDocument,
     "\n  query GetNotFollowedUser($userId: ID!) {\n    getNotFollowedUser(userId: $userId) {\n      id\n      lastname\n      firstname\n      username\n      profile\n      _count {\n        following\n        followedBy\n      }\n    }\n  }\n": types.GetNotFollowedUserDocument,
+    "\n  query GetMostTalkedPosts {\n    getMostTalkedPosts {\n      id\n      author {\n        firstname\n        lastname\n      }\n\n      title\n      createdAt\n      description\n    }\n  }\n": types.GetMostTalkedPostsDocument,
     "\n  subscription Subscription($postId: ID!) {\n    commentAdded(postId: $postId) {\n      id\n      comment\n      user {\n        firstname\n        lastname\n        username\n        profile\n      }\n    }\n  }\n": types.SubscriptionDocument,
     "\n  subscription PostLiked($postId: ID!) {\n    postLiked(postId: $postId) {\n      postId\n      type\n    }\n  }\n": types.PostLikedDocument,
 };
@@ -106,6 +107,10 @@ export function gql(source: "\n  query Query($query: String) {\n    searchUser(q
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GetNotFollowedUser($userId: ID!) {\n    getNotFollowedUser(userId: $userId) {\n      id\n      lastname\n      firstname\n      username\n      profile\n      _count {\n        following\n        followedBy\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetNotFollowedUser($userId: ID!) {\n    getNotFollowedUser(userId: $userId) {\n      id\n      lastname\n      firstname\n      username\n      profile\n      _count {\n        following\n        followedBy\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetMostTalkedPosts {\n    getMostTalkedPosts {\n      id\n      author {\n        firstname\n        lastname\n      }\n\n      title\n      createdAt\n      description\n    }\n  }\n"): (typeof documents)["\n  query GetMostTalkedPosts {\n    getMostTalkedPosts {\n      id\n      author {\n        firstname\n        lastname\n      }\n\n      title\n      createdAt\n      description\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
