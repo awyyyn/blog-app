@@ -51,7 +51,7 @@ const CreatePostModal = () => {
 
   if (error) throw new Error(error.message);
   return (
-    <Modal isOpen={modal.isOpen} placement="top-center" onOpenChange={setModal}>
+    <Modal isOpen={modal.isOpen} placement="center" onOpenChange={setModal}>
       <ModalContent>
         {(onClose) => (
           <form onSubmit={handleSubmit(onSubmit)}>

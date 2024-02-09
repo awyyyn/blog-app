@@ -34,11 +34,15 @@ function UserNavBarContent() {
       <DropdownMenu aria-label="Profile Actions" variant="flat">
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold">zoey@example.com</p>
+          <p className="font-semibold">{user.username}</p>
         </DropdownItem>
-        <DropdownItem key="settings">My Settings</DropdownItem>
-        <DropdownItem key="team_settings">Team Settings</DropdownItem>
-        <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+        <DropdownItem key="team_settings">Profile</DropdownItem>
+        <DropdownItem
+          key="logout"
+          color="danger"
+          className="text-danger-500"
+          onClick={handleLogout}
+        >
           Log Out
         </DropdownItem>
       </DropdownMenu>

@@ -92,7 +92,8 @@ model Notification {
   
   post_id String @db.ObjectId 
   post Post @relation(name: "PostNotification", fields: [post_id], references: [id])
-  
+    
+
   isRead Boolean @default(false)
   type NotificationType
   createdAt DateTime @default(now()) 

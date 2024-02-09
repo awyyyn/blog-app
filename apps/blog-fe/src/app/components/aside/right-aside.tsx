@@ -6,9 +6,8 @@ import {
 import { userStore } from '../../store/userStore';
 import { User } from '../../gql-types/graphql';
 import UserCard from '../user-card/user-card';
-import { FOLLOW_USER, REMOVE_FOLLOWED_USER } from '../../gql/mutations/user';
+import { FOLLOW_USER } from '../../gql/mutations/user';
 import TopPostCard from '../top-post-card/top-post-card';
-import { Suspense } from 'react';
 
 const RightAside = () => {
   const { user: currentUser } = userStore();
@@ -46,7 +45,7 @@ const RightAside = () => {
           ))}
         </>
       )}
-      <h1>Most talked posts</h1>
+      <h1 className="text-lg font-bold">Most talked posts</h1>
       <div className="space-y-7">
         {topPost?.getMostTalkedPosts?.map((post) => (
           <TopPostCard
